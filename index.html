@@ -21,15 +21,15 @@
     @keyframes spinCCW { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
     @keyframes brainFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-    input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+    input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 15px 0; }
     input[type=range]::-webkit-slider-runnable-track { height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; }
-    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%; background: #00F0FF; margin-top: -6px; box-shadow: 0 0 10px #00F0FF; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%; background: #00F0FF; margin-top: -7px; box-shadow: 0 0 15px #00F0FF; }
   </style>
 </head>
 <body>
   <div id="root"></div>
 
-  <script type="text/babel" data-presets="react">
+  <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
     const BP = { pink: "#e60c78", cyan: "#00F0FF", base: "#290b47" };
@@ -50,9 +50,9 @@
       { id: "astrid", emoji: "👶🏻", color: "#f42a53" }
     ];
 
-    function BrainSVG({ size = 100 }) {
+    function BrainSVG({ size = 110 }) {
       return (
-        <svg width={size} height={size} viewBox="0 0 36 36" style={{ filter: 'drop-shadow(0 0 12px #00F0FF66)' }}>
+        <svg width={size} height={size} viewBox="0 0 36 36" style={{ filter: 'drop-shadow(0 0 15px rgba(0, 240, 255, 0.4))' }}>
           <path fill="#F4ABBA" d="M29.75 27.625s2.184-.443 3.542-2.229c1.583-2.083 1.375-4.312 1.375-4.312c1.604-3-.5-5.813-.5-5.813C33.958 12.104 32 10.792 32 10.792c-1.271-3.021-4.083-3.833-4.083-3.833c-2.208-2.583-6.125-2.5-6.125-2.5s-3.67-1.345-8.708.167c-.833.25-3.625.833-5.667 2.083C.981 10.649.494 16.793.584 17.792C1.083 23.375 5 24.375 7.5 24.958c.583 1.583 2.729 4.5 6.583 3.417c4.75-.833 6.75-2.25 7.917-2.25s4.417 1.25 7.75 1.5z" />
           <path fill="#EA596E" d="M17.737 18.648c2.328-1.255 3.59-1.138 4.704-1.037c.354.032.689.057 1.028.055c1.984-.045 3.591-.881 4.302-1.69a.501.501 0 0 0-.752-.661c-.548.624-1.899 1.313-3.573 1.351c-.3.009-.601-.021-.913-.05c-1.195-.111-2.679-.247-5.271 1.152c-.665.359-1.577.492-2.565.592c-2.197-3.171-.875-5.933-.497-6.591" />
         </svg>
@@ -60,36 +60,130 @@
     }
 
     function ShieldVisual({ intensities, germLevel }) {
-      const rings = ACTIVITIES.map((a, i) => ({ 
-        id: a.id, 
-        idx: intensities[a.id], 
-        color: RINGS[i % RINGS.length], 
-        i 
-      })).filter(r => r.idx !== undefined);
-      
-      const size = 300, center = size / 2;
+      const active = ACTIVITIES.map((a, i) => ({ id: a.id, idx: intensities[a.id], color: RINGS[i % RINGS.length] })).filter(r => r.idx !== undefined);
+      const size = 320, center = size / 2;
       const [sparks, setSparks] = useState([]);
 
       useEffect(() => {
         const iv = setInterval(() => {
           if (germLevel === 0) return;
-          const newSparks = Array.from({ length: 3 }, () => ({
-            id: Math.random(),
-            angle: Math.random() * 2 * Math.PI,
-            dist: 20 + Math.random() * 30
-          }));
-          setSparks(newSparks);
-          setTimeout(() => setSparks([]), 1000);
-        }, 2000);
+          const s = Array.from({ length: 3 }, () => ({ id: Math.random(), angle: Math.random() * 2 * Math.PI, dist: 30 + Math.random() * 20 }));
+          setSparks(s);
+          setTimeout(() => setSparks([]), 900);
+        }, 1800);
         return () => clearInterval(iv);
       }, [germLevel]);
 
       return (
         <div style={{ position: "relative", width: size, height: size, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <svg width={size} height={size} style={{ position: "absolute", overflow: "visible" }}>
-            {/* Sparks */}
             {sparks.map(s => (
-              <circle key={s.id} cx={center + Math.cos(s.angle) * 40} cy={center + Math.sin(s.angle) * 40} r="2" fill={BP.cyan}>
-                <animate attributeName="opacity" values="1;0" dur="1s" />
-                <animate attributeName="cx" from={center + Math.cos(s.angle)*40} to={center + Math.cos(s.angle)*(40+s.dist)} dur="1s" />
-                <animate attributeName="cy" from={center + Math.sin(s.angle)*40} to={center + Math.sin(s.angle)*(40+s.dist)} dur="1s" />
+              <circle key={s.id} cx={center + Math.cos(s.angle) * 45} cy={center + Math.sin(s.angle) * 45} r="2" fill={BP.cyan}>
+                <animate attributeName="opacity" values="1;0" dur="0.9s" repeatCount="1" />
+                <animate attributeName="cx" from={center + Math.cos(s.angle)*45} to={center + Math.cos(s.angle)*(45+s.dist)} dur="0.9s" repeatCount="1" />
+                <animate attributeName="cy" from={center + Math.sin(s.angle)*45} to={center + Math.sin(s.angle)*(45+s.dist)} dur="0.9s" repeatCount="1" />
+              </circle>
+            ))}
+            <circle cx={center} cy={center} r="55" fill="none" stroke="#FFF" strokeWidth="1" strokeDasharray="5 5" opacity="0.2" />
+            {active.map((ring, ri) => {
+              const r = 72 + (ri * 14);
+              const arc = 2 * Math.PI * r;
+              const pct = 0.25 + (ring.idx / 8) * 0.45;
+              return (
+                <circle 
+                  key={ring.id} cx={center} cy={center} r={r} fill="none" 
+                  stroke={ring.color} strokeWidth="10" strokeDasharray={`${arc * pct} ${arc * (1 - pct)}`} 
+                  strokeLinecap="round" style={{ transformOrigin: "center", animation: `${ri % 2 === 0 ? 'spinCW' : 'spinCCW'} 12s linear infinite` }} 
+                />
+              );
+            })}
+          </svg>
+          <div style={{ animation: "brainFloat 4s ease-in-out infinite", zIndex: 5 }}><BrainSVG /></div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [immunity, setImmunity] = useState(10);
+      const [intensities, setIntensities] = useState({});
+      const [tab, setTab] = useState("immunity");
+      const [tvToday, setTvToday] = useState("no");
+      const [germLevel, setGermLevel] = useState(1);
+      const [expanded, setExpanded] = useState(null);
+      const [admin, setAdmin] = useState(false);
+
+      const updateActivity = (a, val) => {
+        const prev = intensities[a.id] ?? 0;
+        const pts = (v) => Math.round(a.power * (0.1 + (v / 8) * 0.9));
+        setImmunity(p => Math.min(100, Math.max(0, p - pts(prev) + pts(val))));
+        setIntensities(p => ({ ...p, [a.id]: val }));
+      };
+
+      return (
+        <div style={{ maxWidth: 450, margin: "0 auto", padding: "20px", paddingBottom: "110px" }}>
+          <header style={{ textAlign: "center", marginBottom: 20 }} onClick={() => setAdmin(!admin)}>
+            <h1 className="zap-font" style={{ fontSize: "2.8rem", color: BP.cyan, margin: 0, cursor: 'pointer' }}>Zap Zap</h1>
+            {admin && <div style={{ fontSize: "0.6rem", background: BP.pink, padding: "2px 8px", borderRadius: 10, display: 'inline-block' }}>ADMIN ACTIVE</div>}
+          </header>
+
+          <div style={{ display: "flex", justifyContent: "center", gap: 15, marginBottom: 20 }}>
+            {KIDS.map(k => <div key={k.id} style={{ width: 55, height: 55, borderRadius: "20%", background: k.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.6rem", boxShadow: "0 6px 15px rgba(0,0,0,0.3)" }}>{k.emoji}</div>)}
+          </div>
+
+          {tab === "immunity" && (
+            <div style={{ animation: 'fadeIn 0.4s ease' }}>
+              <ShieldVisual intensities={intensities} germLevel={germLevel} />
+              <div style={{ textAlign: "center", margin: "20px 0", fontSize: "1.1rem", fontWeight: "700", color: BP.cyan }}>ZAP CHARGE: {immunity}%</div>
+              {ACTIVITIES.map((a, i) => (
+                <div key={a.id} style={{ background: expanded === a.id ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.04)", borderRadius: "18px", padding: "16px", marginBottom: 12, cursor: 'pointer' }} onClick={() => setExpanded(expanded === a.id ? null : a.id)}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <span style={{ fontSize: "1.5rem" }}>{a.emoji}</span>
+                    <span style={{ flex: 1, fontWeight: 600 }}>{a.label}</span>
+                    {intensities[a.id] !== undefined && <div style={{ width: 10, height: 10, borderRadius: "50%", background: RINGS[i % RINGS.length] }} />}
+                  </div>
+                  {expanded === a.id && (
+                    <div style={{ marginTop: 15 }} onClick={e => e.stopPropagation()}>
+                      <input type="range" min="0" max="8" value={intensities[a.id] ?? 0} onChange={e => updateActivity(a, parseInt(e.target.value))} />
+                      <button onClick={() => {
+                        const prev = intensities[a.id] ?? 0;
+                        setImmunity(p => Math.max(0, p - Math.round(a.power * (0.1 + (prev / 8) * 0.9))));
+                        setIntensities(p => { const n = {...p}; delete n[a.id]; return n; });
+                      }} style={{ background: "none", border: "none", color: "#FF5F59", fontSize: "0.8rem", padding: 0, marginTop: 10, cursor: 'pointer' }}>Remove Activity</button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {tab === "schedule" && (
+            <div style={{ textAlign: "center", padding: "70px 20px", background: "rgba(255,255,255,0.03)", borderRadius: "35px" }}>
+              <div style={{ fontSize: "6rem", marginBottom: 15 }}>{tvToday === "yes" ? "🏆" : "🚫"}</div>
+              <h2 className="zap-font" style={{ fontSize: "2.2rem" }}>{tvToday === "yes" ? "TV TIME!" : "NO TV YET"}</h2>
+              <p style={{ opacity: 0.6 }}>Immunity Strength: {immunity}%</p>
+            </div>
+          )}
+
+          {admin && tab === "parent" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
+              <button onClick={() => setTvToday(tvToday === "yes" ? "no" : "yes")} style={{ padding: 18, background: BP.pink, color: "#fff", border: "none", borderRadius: 15, fontWeight: 'bold' }}>Toggle TV Reward</button>
+              <div style={{ display: "flex", gap: 8 }}>
+                {[0,1,2,3].map(l => <button key={l} onClick={() => setGermLevel(l)} style={{ flex: 1, padding: 12, background: germLevel === l ? BP.cyan : "#333", border: "none", color: "#fff", borderRadius: 10 }}>Level {l}</button>)}
+              </div>
+            </div>
+          )}
+
+          <nav style={{ position: "fixed", bottom: 25, left: "50%", transform: "translateX(-50%)", width: "90%", maxWidth: 400, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(20px)", borderRadius: "22px", display: "flex", padding: "8px", gap: 8, zIndex: 1000 }}>
+            <button onClick={() => setTab("immunity")} style={{ flex: 1, padding: "14px", borderRadius: "16px", background: tab === "immunity" ? "rgba(255,255,255,0.15)" : "none", border: "none", color: "#fff" }}>🛡️</button>
+            <button onClick={() => setTab("schedule")} style={{ flex: 1, padding: "14px", borderRadius: "16px", background: tab === "schedule" ? "rgba(255,255,255,0.15)" : "none", border: "none", color: "#fff" }}>📺</button>
+            {admin && <button onClick={() => setTab("parent")} style={{ flex: 1, padding: "14px", borderRadius: "16px", background: tab === "parent" ? "rgba(255,255,255,0.15)" : "none", border: "none", color: "#fff" }}>⚙️</button>}
+          </nav>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
