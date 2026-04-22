@@ -32,155 +32,1714 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
-    const BP = { pink: "#e60c78", cyan: "#00F0FF", base: "#290b47" };
-    const RINGS = ["#F5C7F2", "#00FFC5", "#FFFD77", "#85C7F2", "#FF5F59", "#B2B09B"];
+    const BP = {
+ pink: "#e60c78",
+ roundbuttons: "#290b47",
+ white: "#FFFF11",
+ cyan: "#00F0FF",
+ basecolour: "#290b47",
+ roundbuttonsTint: "#E6F7F7",
+ text: "#FFFFFF",
+ textMed: "#FFFFFF",
+ textLight: "#FFFFFF",
+ textDark: "#290b47",
+ coral: "#E05070",
+ gold: "#D4A020",
+ sliderBg: "#e60c78",
+ sliderFg: "#290b47",
+};
 
-    const ACTIVITIES = [
-      { id: "outside", label: "Outside Time", emoji: "⚽", power: 30 },
-      { id: "veggies", label: "Eating Veggies", emoji: "🥦", power: 10 },
-      { id: "reading", label: "Reading", emoji: "📚", power: 15 },
-      { id: "writing", label: "Writing", emoji: "✏️", power: 15 },
-      { id: "creating", label: "Creating", emoji: "🪄", power: 15 },
-      { id: "firsttime", label: "First Time!", emoji: "🌟", power: 10 }
-    ];
 
-    const KIDS = [
-      { id: "lara", emoji: "👧🏻", color: "#e60c78" },
-      { id: "ari", emoji: "👦🏻", color: "#ff6c06" },
-      { id: "astrid", emoji: "👶🏻", color: "#f42a53" }
-    ];
+// ─────────────────────────────────────────────────────────────────
+// ── FONTS — edit here to change fonts across the whole app ───────
+// ─────────────────────────────────────────────────────────────────
+const FONTS = {
+ // We combine Henny Penny and a clean body font (like Montserrat) in one URL
+ importUrl:
+   "https://fonts.googleapis.com/css2?family=Henny+Penny&family=Montserrat:wght@600&display=swap",
 
-    function BrainSVG({ size = 110 }) {
-      return (
-        <svg width={size} height={size} viewBox="0 0 36 36" style={{ filter: 'drop-shadow(0 0 15px rgba(0, 240, 255, 0.4))' }}>
-          <path fill="#F4ABBA" d="M29.75 27.625s2.184-.443 3.542-2.229c1.583-2.083 1.375-4.312 1.375-4.312c1.604-3-.5-5.813-.5-5.813C33.958 12.104 32 10.792 32 10.792c-1.271-3.021-4.083-3.833-4.083-3.833c-2.208-2.583-6.125-2.5-6.125-2.5s-3.67-1.345-8.708.167c-.833.25-3.625.833-5.667 2.083C.981 10.649.494 16.793.584 17.792C1.083 23.375 5 24.375 7.5 24.958c.583 1.583 2.729 4.5 6.583 3.417c4.75-.833 6.75-2.25 7.917-2.25s4.417 1.25 7.75 1.5z" />
-          <path fill="#EA596E" d="M17.737 18.648c2.328-1.255 3.59-1.138 4.704-1.037c.354.032.689.057 1.028.055c1.984-.045 3.591-.881 4.302-1.69a.501.501 0 0 0-.752-.661c-.548.624-1.899 1.313-3.573 1.351c-.3.009-.601-.021-.913-.05c-1.195-.111-2.679-.247-5.271 1.152c-.665.359-1.577.492-2.565.592c-2.197-3.171-.875-5.933-.497-6.591" />
-        </svg>
-      );
-    }
 
-    function ShieldVisual({ intensities, germLevel }) {
-      const active = ACTIVITIES.map((a, i) => ({ id: a.id, idx: intensities[a.id], color: RINGS[i % RINGS.length] })).filter(r => r.idx !== undefined);
-      const size = 320, center = size / 2;
-      const [sparks, setSparks] = useState([]);
+ // Title font for "ZapZap"
+ title: "'Henny Penny', system-ui, serif",
 
-      useEffect(() => {
-        const iv = setInterval(() => {
-          if (germLevel === 0) return;
-          const s = Array.from({ length: 3 }, () => ({ id: Math.random(), angle: Math.random() * 2 * Math.PI, dist: 30 + Math.random() * 20 }));
-          setSparks(s);
-          setTimeout(() => setSparks([]), 900);
-        }, 1800);
-        return () => clearInterval(iv);
-      }, [germLevel]);
 
-      return (
-        <div style={{ position: "relative", width: size, height: size, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <svg width={size} height={size} style={{ position: "absolute", overflow: "visible" }}>
-            {sparks.map(s => (
-              <circle key={s.id} cx={center + Math.cos(s.angle) * 45} cy={center + Math.sin(s.angle) * 45} r="2" fill={BP.cyan}>
-                <animate attributeName="opacity" values="1;0" dur="0.9s" repeatCount="1" />
-                <animate attributeName="cx" from={center + Math.cos(s.angle)*45} to={center + Math.cos(s.angle)*(45+s.dist)} dur="0.9s" repeatCount="1" />
-                <animate attributeName="cy" from={center + Math.sin(s.angle)*45} to={center + Math.sin(s.angle)*(45+s.dist)} dur="0.9s" repeatCount="1" />
-              </circle>
-            ))}
-            <circle cx={center} cy={center} r="55" fill="none" stroke="#FFF" strokeWidth="1" strokeDasharray="5 5" opacity="0.2" />
-            {active.map((ring, ri) => {
-              const r = 72 + (ri * 14);
-              const arc = 2 * Math.PI * r;
-              const pct = 0.25 + (ring.idx / 8) * 0.45;
-              return (
-                <circle 
-                  key={ring.id} cx={center} cy={center} r={r} fill="none" 
-                  stroke={ring.color} strokeWidth="10" strokeDasharray={`${arc * pct} ${arc * (1 - pct)}`} 
-                  strokeLinecap="round" style={{ transformOrigin: "center", animation: `${ri % 2 === 0 ? 'spinCW' : 'spinCCW'} 12s linear infinite` }} 
-                />
-              );
-            })}
-          </svg>
-          <div style={{ animation: "brainFloat 4s ease-in-out infinite", zIndex: 5 }}><BrainSVG /></div>
-        </div>
-      );
-    }
+ // Body font for "Outside Time", "Reading", etc.
+ body: "'Montserrat', Verdana, sans-serif",
+};
+// ─────────────────────────────────────────────────────────────────
 
-    function App() {
-      const [immunity, setImmunity] = useState(10);
-      const [intensities, setIntensities] = useState({});
-      const [tab, setTab] = useState("immunity");
-      const [tvToday, setTvToday] = useState("no");
-      const [germLevel, setGermLevel] = useState(1);
-      const [expanded, setExpanded] = useState(null);
-      const [admin, setAdmin] = useState(false);
 
-      const updateActivity = (a, val) => {
-        const prev = intensities[a.id] ?? 0;
-        const pts = (v) => Math.round(a.power * (0.1 + (v / 8) * 0.9));
-        setImmunity(p => Math.min(100, Math.max(0, p - pts(prev) + pts(val))));
-        setIntensities(p => ({ ...p, [a.id]: val }));
-      };
+const RING_COLORS = [
+ "#F5C7F2", //outsidetime
+ "#00FFC5", //veggies
+ "#FFFD77", //reading
+ "#85C7F2", //writing
+ "#FF5F59", //creating
+ "#B2B09B", //puzzles
+ "#E3B5A4", //first
+ "#FFB300",
+];
+const INTENSITY_STEPS = 9; // slider steps — stored as 0–8
+// Map 0–8 index to a 0.1–1.0 multiplier smoothly
+const intensityMult = (idx) => 0.1 + (idx / (INTENSITY_STEPS - 1)) * 0.9;
+const TV_POWER = 15;
+const SLEEP_BASE = 10;
 
-      return (
-        <div style={{ maxWidth: 450, margin: "0 auto", padding: "20px", paddingBottom: "110px" }}>
-          <header style={{ textAlign: "center", marginBottom: 20 }} onClick={() => setAdmin(!admin)}>
-            <h1 className="zap-font" style={{ fontSize: "2.8rem", color: BP.cyan, margin: 0, cursor: 'pointer' }}>Zap Zap</h1>
-            {admin && <div style={{ fontSize: "0.6rem", background: BP.pink, padding: "2px 8px", borderRadius: 10, display: 'inline-block' }}>ADMIN ACTIVE</div>}
-          </header>
 
-          <div style={{ display: "flex", justifyContent: "center", gap: 15, marginBottom: 20 }}>
-            {KIDS.map(k => <div key={k.id} style={{ width: 55, height: 55, borderRadius: "20%", background: k.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.6rem", boxShadow: "0 6px 15px rgba(0,0,0,0.3)" }}>{k.emoji}</div>)}
-          </div>
+const ACTIVITIES = [
+ { id: "outside", label: "Outside Time", emoji: "⚽", power: 30 },
+ { id: "veggies", label: "Eating Veggies", emoji: "🥦", power: 10 },
+ { id: "reading", label: "Reading", emoji: "📚", power: 15 },
+ { id: "writing", label: "Writing", emoji: "✏️", power: 15 },
+ { id: "creating", label: "Creating", emoji: "🪄", power: 15 },
+ { id: "puzzles", label: "Puzzles", emoji: "♟️", power: 15 },
+ {
+   id: "firsttime",
+   label: "First Time!",
+   emoji: "🌟",
+   power: 8,
+   isFirstTime: true,
+ },
+];
 
-          {tab === "immunity" && (
-            <div style={{ animation: 'fadeIn 0.4s ease' }}>
-              <ShieldVisual intensities={intensities} germLevel={germLevel} />
-              <div style={{ textAlign: "center", margin: "20px 0", fontSize: "1.1rem", fontWeight: "700", color: BP.cyan }}>ZAP CHARGE: {immunity}%</div>
-              {ACTIVITIES.map((a, i) => (
-                <div key={a.id} style={{ background: expanded === a.id ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.04)", borderRadius: "18px", padding: "16px", marginBottom: 12, cursor: 'pointer' }} onClick={() => setExpanded(expanded === a.id ? null : a.id)}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <span style={{ fontSize: "1.5rem" }}>{a.emoji}</span>
-                    <span style={{ flex: 1, fontWeight: 600 }}>{a.label}</span>
-                    {intensities[a.id] !== undefined && <div style={{ width: 10, height: 10, borderRadius: "50%", background: RINGS[i % RINGS.length] }} />}
-                  </div>
-                  {expanded === a.id && (
-                    <div style={{ marginTop: 15 }} onClick={e => e.stopPropagation()}>
-                      <input type="range" min="0" max="8" value={intensities[a.id] ?? 0} onChange={e => updateActivity(a, parseInt(e.target.value))} />
-                      <button onClick={() => {
-                        const prev = intensities[a.id] ?? 0;
-                        setImmunity(p => Math.max(0, p - Math.round(a.power * (0.1 + (prev / 8) * 0.9))));
-                        setIntensities(p => { const n = {...p}; delete n[a.id]; return n; });
-                      }} style={{ background: "none", border: "none", color: "#FF5F59", fontSize: "0.8rem", padding: 0, marginTop: 10, cursor: 'pointer' }}>Remove Activity</button>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
 
-          {tab === "schedule" && (
-            <div style={{ textAlign: "center", padding: "70px 20px", background: "rgba(255,255,255,0.03)", borderRadius: "35px" }}>
-              <div style={{ fontSize: "6rem", marginBottom: 15 }}>{tvToday === "yes" ? "🏆" : "🚫"}</div>
-              <h2 className="zap-font" style={{ fontSize: "2.2rem" }}>{tvToday === "yes" ? "TV TIME!" : "NO TV YET"}</h2>
-              <p style={{ opacity: 0.6 }}>Immunity Strength: {immunity}%</p>
-            </div>
-          )}
+const KIDS = [
+ { id: "lara", name: "Lara", emoji: "👧🏻", color: "#e60c78" },
+ { id: "ari", name: "Ari", emoji: "👦🏻", color: "#ff6c06" },
+ { id: "astrid", name: "Astrid", emoji: "👶🏻", color: "#f42a53" },
+];
 
-          {admin && tab === "parent" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
-              <button onClick={() => setTvToday(tvToday === "yes" ? "no" : "yes")} style={{ padding: 18, background: BP.pink, color: "#fff", border: "none", borderRadius: 15, fontWeight: 'bold' }}>Toggle TV Reward</button>
-              <div style={{ display: "flex", gap: 8 }}>
-                {[0,1,2,3].map(l => <button key={l} onClick={() => setGermLevel(l)} style={{ flex: 1, padding: 12, background: germLevel === l ? BP.cyan : "#333", border: "none", color: "#fff", borderRadius: 10 }}>Level {l}</button>)}
-              </div>
-            </div>
-          )}
 
-          <nav style={{ position: "fixed", bottom: 25, left: "50%", transform: "translateX(-50%)", width: "90%", maxWidth: 400, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(20px)", borderRadius: "22px", display: "flex", padding: "8px", gap: 8, zIndex: 1000 }}>
-            <button onClick={() => setTab("immunity")} style={{ flex: 1, padding: "14px", borderRadius: "16px", background: tab === "immunity" ? "rgba(255,255,255,0.15)" : "none", border: "none", color: "#fff" }}>🛡️</button>
-            <button onClick={() => setTab("schedule")} style={{ flex: 1, padding: "14px", borderRadius: "16px", background: tab === "schedule" ? "rgba(255,255,255,0.15)" : "none", border: "none", color: "#fff" }}>📺</button>
-            {admin && <button onClick={() => setTab("parent")} style={{ flex: 1, padding: "14px", borderRadius: "16px", background: tab === "parent" ? "rgba(255,255,255,0.15)" : "none", border: "none", color: "#fff" }}>⚙️</button>}
-          </nav>
-        </div>
-      );
-    }
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const GLOW = 100;
+
+
+const STRENGTH = [
+ { min: 0, max: 14, label: "Thin Protection", color: BP.textLight },
+ { min: 15, max: 29, label: "Small Protection", color: BP.textLight },
+ { min: 30, max: 49, label: "Some Protection", color: BP.textLight },
+ { min: 50, max: 64, label: "Good Protection", color: BP.textLight },
+ { min: 65, max: 79, label: "Strong Protection", color: BP.textLight },
+ {
+   min: 80,
+   max: 100,
+   label: "Super Strong Protection! 💪",
+   color: BP.textLight,
+ },
+];
+const getStr = (lv) =>
+ STRENGTH.find((s) => lv >= s.min && lv <= s.max) || STRENGTH[0];
+
+
+async function load(k) {
+ try {
+   const r = await window.storage.get(k);
+   return r ? JSON.parse(r.value) : null;
+ } catch {
+   return null;
+ }
+}
+async function save(k, v) {
+ try {
+   await window.storage.set(k, JSON.stringify(v));
+ } catch {}
+}
+
+
+// ── Brain SVG ──────────────────────────────────────────────────────
+function BrainSVG({ size = 100 }) {
+ return (
+   <svg width={size} height={size} viewBox="0 0 36 36">
+     <path
+       d="M50,82 C36,82 22,74 18,62 C14,50 16,38 22,30 C28,22 36,18 42,20 C44,16 48,14 52,15 L52,82 Z"
+       fill="url(#bg1)"
+     />
+     <path
+       d="M50,82 C64,82 78,74 82,62 C86,50 84,38 78,30 C72,22 64,18 58,20 C56,16 52,14 48,15 L48,82 Z"
+       fill="url(#bg2)"
+     />
+     <path
+       fill="#EA596E"
+       d="M29.896 26.667c.003.283-.07.653-.146.958c-.531 2.145-2.889 4.552-6.208 4.333c-3.008-.198-5.458-1.642-5.458-3.667s2.444-3.667 5.458-3.667s6.335.018 6.354 2.043z"
+     ></path>
+
+
+     <path
+       fill="#DD2E44"
+       d="M23.542 24.964c-1.619 0-5.314.448-6.162.448c-1.498 0-2.713.94-2.713 2.1c0 .558.286 1.062.744 1.438c0 0 1.006 1.009 2.818.525c.793-.212 2.083-1.786 4.354-2.036c1.131-.125 3.25.75 6.974.771c.16-.344.193-.583.193-.583c0-2.027-3.194-2.663-6.208-2.663z"
+     ></path>
+
+
+     <path
+       fill="#F4ABBA"
+       d="M29.75 27.625s2.184-.443 3.542-2.229c1.583-2.083 1.375-4.312 1.375-4.312c1.604-3-.5-5.813-.5-5.813C33.958 12.104 32 10.792 32 10.792c-1.271-3.021-4.083-3.833-4.083-3.833c-2.208-2.583-6.125-2.5-6.125-2.5s-3.67-1.345-8.708.167c-.833.25-3.625.833-5.667 2.083C.981 10.649.494 16.793.584 17.792C1.083 23.375 5 24.375 7.5 24.958c.583 1.583 2.729 4.5 6.583 3.417c4.75-.833 6.75-2.25 7.917-2.25s4.417 1.25 7.75 1.5z"
+     ></path>
+
+
+     <g fill="#EA596E">
+       <path d="M17.737 18.648c2.328-1.255 3.59-1.138 4.704-1.037c.354.032.689.057 1.028.055c1.984-.045 3.591-.881 4.302-1.69a.501.501 0 0 0-.752-.661c-.548.624-1.899 1.313-3.573 1.351c-.3.009-.601-.021-.913-.05c-1.195-.111-2.679-.247-5.271 1.152c-.665.359-1.577.492-2.565.592c-2.197-3.171-.875-5.933-.497-6.591c.037.002.073.014.111.014c.4 0 .802-.098 1.166-.304a.5.5 0 0 0-.492-.87a1.426 1.426 0 0 1-1.88-.467a.5.5 0 0 0-.841.539c.237.371.571.65.948.837c-.521 1.058-1.51 3.84.372 6.951c-1.324.13-2.65.317-3.688.986a7.182 7.182 0 0 0-1.878 1.791c-.629-.108-2.932-.675-3.334-3.231c.25-.194.452-.45.577-.766a.5.5 0 1 0-.93-.368a.772.772 0 0 1-.454.461a.777.777 0 0 1-.643-.07a.5.5 0 0 0-.486.874c.284.158.588.238.89.238c.037 0 .072-.017.109-.019c.476 2.413 2.383 3.473 3.732 3.794a3.69 3.69 0 0 0-.331 1.192a.5.5 0 0 0 .454.542l.045.002a.5.5 0 0 0 .498-.456c.108-1.213 1.265-2.48 2.293-3.145c.964-.621 2.375-.752 3.741-.879c1.325-.121 2.577-.237 3.558-.767zm12.866-1.504a.5.5 0 0 0 .878.48c.019-.034 1.842-3.449-1.571-5.744a.5.5 0 0 0-.558.83c2.644 1.778 1.309 4.326 1.251 4.434zM9.876 9.07a.497.497 0 0 0 .406-.208c1.45-2.017 3.458-1.327 3.543-1.295a.5.5 0 0 0 .345-.938c-.96-.356-3.177-.468-4.7 1.65a.5.5 0 0 0 .406.791zm13.072-1.888c2.225-.181 3.237 1.432 3.283 1.508a.5.5 0 0 0 .863-.507c-.054-.091-1.34-2.218-4.224-1.998a.5.5 0 0 0 .078.997zm9.15 14.611c-.246-.014-.517.181-.539.457c-.002.018-.161 1.719-1.91 2.294a.499.499 0 0 0 .157.975a.499.499 0 0 0 .156-.025c2.372-.778 2.586-3.064 2.594-3.161a.502.502 0 0 0-.458-.54z"></path>
+       <path d="M7.347 16.934a.5.5 0 1 0 .965.26a1.423 1.423 0 0 1 1.652-1.014a.5.5 0 0 0 .205-.979a2.354 2.354 0 0 0-1.248.086c-1.166-1.994-.939-3.96-.936-3.981a.502.502 0 0 0-.429-.562a.503.503 0 0 0-.562.427c-.013.097-.28 2.316 1.063 4.614a2.376 2.376 0 0 0-.71 1.149zm11.179-2.47a1.069 1.069 0 0 1 1.455.015a.502.502 0 0 0 .707-.011a.5.5 0 0 0-.01-.707a2.004 2.004 0 0 0-.797-.465c.296-1.016.179-1.467-.096-2.312a20.6 20.6 0 0 1-.157-.498l-.03-.1c-.364-1.208-.605-2.005.087-3.13a.5.5 0 0 0-.852-.524c-.928 1.508-.587 2.637-.192 3.944l.03.1c.059.194.113.364.163.517c.247.761.322 1.016.02 1.936a2.022 2.022 0 0 0-1.01.504a.5.5 0 0 0 .682.731zm6.365-2.985a2 2 0 0 0 .859-.191a.5.5 0 0 0-.426-.905a1.072 1.072 0 0 1-1.384-.457a.5.5 0 1 0-.881.472c.18.336.448.601.76.785c-.537 1.305-.232 2.691.017 3.426a.5.5 0 1 0 .947-.319c-.168-.498-.494-1.756-.002-2.826c.038.002.073.015.11.015zm4.797 9.429a.497.497 0 0 0-.531-.467a1.825 1.825 0 0 1-1.947-1.703a.509.509 0 0 0-.533-.465a.502.502 0 0 0-.465.533c.041.59.266 1.122.608 1.555c-.804.946-1.857 1.215-2.444 1.284c-.519.062-.973.009-1.498-.053c-.481-.055-1.025-.118-1.698-.098l-.005.001c-.02-.286-.088-.703-.305-1.05a.501.501 0 0 0-.847.531c.134.215.159.558.159.725c-.504.181-.94.447-1.334.704c-.704.458-1.259.82-2.094.632c-.756-.173-1.513-.208-2.155-.118c-.1-.251-.258-.551-.502-.782a.5.5 0 0 0-.687.727c.086.081.154.199.209.317c-1.103.454-1.656 1.213-1.682 1.25a.499.499 0 0 0 .407.788a.502.502 0 0 0 .406-.205c.005-.008.554-.743 1.637-1.04c.56-.154 1.363-.141 2.146.037c.219.05.422.067.619.07c.093.218.129.477.134.573a.501.501 0 0 0 .499.472l.027-.001a.5.5 0 0 0 .473-.523a3.023 3.023 0 0 0-.13-.686c.461-.167.862-.428 1.239-.673c.572-.373 1.113-.726 1.82-.749c.592-.021 1.08.036 1.551.091c.474.055.94.091 1.454.061c.091.253.084.591.07.704a.503.503 0 0 0 .497.563a.5.5 0 0 0 .495-.435a2.883 2.883 0 0 0-.059-.981a4.67 4.67 0 0 0 2.345-1.471a2.807 2.807 0 0 0 1.656.413a.499.499 0 0 0 .465-.531z"></path>{" "}
+     </g>
+   </svg>
+ );
+}
+
+
+// ── Brain + shield rings ───────────────────────────────────────────
+function BrainShield({ intensities, immunity, isGlowing, germLevel = 0 }) {
+ const BRAIN = 100,
+   SLEEP_R = BRAIN,
+   RING_START = SLEEP_R + 10,
+   GAP = 10;
+
+
+ // germLevel 0 = none, 1 = normal, 2 = medium, 3 = high
+ const germOpacity = [0, 0.18, 0.42, 0.72][germLevel];
+ const germCount = [0, 10, 18, 28][germLevel];
+ // How dramatically germs bounce outward: px of extra bounce at each level
+ const bounceAmp = [0, 8, 22, 48][germLevel];
+ // Bounce speed: lower = slower drift, higher = snappier
+ const bounceSpeed = [0, 5, 3.5, 2][germLevel];
+
+
+ // Sparks — count scales with germLevel, everything else stays constant
+ const sparkCountBase = [0, 2, 5, 9][germLevel];
+
+
+ const [sparks, setSparks] = useState([]);
+ const sparkId = useRef(0);
+ useEffect(() => {
+   const iv = setInterval(() => {
+     if (germLevel === 0) return;
+     const count = sparkCountBase + Math.floor(Math.random() * 2);
+     const base = Math.random() * 2 * Math.PI;
+     setSparks(
+       Array.from({ length: count }, (_, i) => ({
+         id: sparkId.current++,
+         angle: base + (i - count / 2) * 0.35 + (Math.random() - 0.5) * 0.2,
+         size: 2 + Math.random() * 2,
+         travel: 20 + Math.random() * 20,
+         dur: 700 + Math.random() * 300,
+         color: "#FFD700",
+       }))
+     );
+     setTimeout(() => setSparks([]), 1100);
+   }, 2200);
+   return () => clearInterval(iv);
+ }, [germLevel]);
+
+
+ // Store only stable per-germ random seeds — never positions (those are computed live)
+ const seeds = useRef(
+   [...Array(28)].map((_, i) => {
+     // Split evenly between left side (around π) and right side (around 0/2π)
+     // Each half gets angles spread within a ±70° arc on its side
+     const isRight = i % 2 === 0;
+     const spread = (Math.random() - 0.5) * 2.4; // ±1.2 rad = roughly ±70°
+     const angle = isRight ? spread : Math.PI + spread;
+     return {
+       angle,
+       bandFrac: Math.random(),
+       size: Math.random() * 16 + 11,
+       speedMult: 0.7 + Math.random() * 0.6,
+       rotation: Math.random() * 360,
+     };
+   })
+ ).current;
+
+
+ // Stable per-ring spin durations — must not use Math.random() at render time
+ const ringDurs = useRef(
+   ACTIVITIES.map((_, i) => 8 + i * 0.7 + Math.random() * 2)
+ ).current;
+
+
+ const rings = ACTIVITIES.map((a, i) => ({
+   idx: intensities[a.id] ?? null,
+   color: RING_COLORS[i % RING_COLORS.length],
+   i,
+   isFirstTime: !!a.isFirstTime,
+ })).filter((r) => r.idx !== null);
+
+
+ const maxR =
+   rings.length > 0 ? RING_START + (rings.length - 1) * GAP : RING_START;
+ const pad = 4,
+   W = (maxR + pad) * 2,
+   H = (maxR + pad) * 2,
+   cx = W / 2,
+   cy = H / 2;
+ const s = getStr(immunity);
+ const sleepThick = 1 + immunity / 100;
+ const dashLen = 6,
+   gapLen = 5;
+
+
+ // Band where germs live: from just outside sleep ring to beyond outermost activity ring
+ // As activities are added, maxR grows and the OUTER edge of the band expands — germs spread out
+ const bandInner = SLEEP_R + 6;
+ const bandOuter = maxR + 44; // always extends well beyond outermost ring
+
+
+ // Build per-germ bounce keyframe CSS — each germ bounces radially outward along its own angle
+ const germKeyframes =
+   germCount > 0
+     ? seeds
+         .slice(0, germCount)
+         .map((seed, i) => {
+           const dx = Math.cos(seed.angle) * bounceAmp;
+           const dy = Math.sin(seed.angle) * bounceAmp;
+           const r = seed.rotation; // static rotation baked into every frame
+           return `
+         @keyframes gb${i} {
+           0%   { transform: translate(0, 0) rotate(${r}deg) scale(1); }
+           40%  { transform: translate(${-dx * 0.3}px, ${
+             -dy * 0.3
+           }px) rotate(${r}deg) scale(0.88); }
+           60%  { transform: translate(${dx}px, ${dy}px) rotate(${r}deg) scale(${
+             1 + germLevel * 0.08
+           }); }
+           75%  { transform: translate(${dx * 0.6}px, ${
+             dy * 0.6
+           }px) rotate(${r}deg) scale(1.02); }
+           100% { transform: translate(0, 0) rotate(${r}deg) scale(1); }
+         }
+       `;
+         })
+         .join("")
+     : "";
+
+
+ return (
+   <div
+     style={{
+       position: "relative",
+       width: W,
+       height: H,
+       margin: "0 auto",
+       display: "flex",
+       alignItems: "center",
+       justifyContent: "center",
+     }}
+   >
+     <svg
+       width={W}
+       height={H}
+       style={{ position: "absolute", inset: 0, overflow: "visible" }}
+     >
+       {/* Per-germ bounce keyframes — injected fresh so they reflect current germLevel */}
+       {germCount > 0 && <style>{germKeyframes}</style>}
+
+
+       {/* Germs — positions computed live from current maxR so they spread as activities are added */}
+       {germCount > 0 &&
+         seeds.slice(0, germCount).map((seed, i) => {
+           // radialDist: linearly interpolate between bandInner and bandOuter using bandFrac
+           // As bandOuter grows with maxR, germs with higher bandFrac move further out
+           const radialDist =
+             bandInner + seed.bandFrac * (bandOuter - bandInner);
+           const gx = cx + Math.cos(seed.angle) * radialDist;
+           const gy = cy + Math.sin(seed.angle) * radialDist;
+           const dur = bounceSpeed * seed.speedMult;
+           return (
+             <text
+               key={`germ-${i}`}
+               x={gx}
+               y={gy}
+               fontSize={seed.size}
+               textAnchor="middle"
+               dominantBaseline="middle"
+               opacity={germOpacity}
+               style={{
+                 userSelect: "none",
+                 animation:
+                   germLevel > 0
+                     ? `gb${i} ${dur}s ease-in-out infinite`
+                     : "none",
+                 transformOrigin: `${gx}px ${gy}px`,
+               }}
+             >
+               🦠
+             </text>
+           );
+         })}
+
+
+       {/* Sleep ring — dotted */}
+       <circle
+         cx={cx}
+         cy={cy}
+         r={SLEEP_R}
+         fill="none"
+         stroke={s.color}
+         strokeWidth={sleepThick}
+         strokeDasharray={`${dashLen} ${gapLen}`}
+         opacity={0.55 + (immunity / 100) * 0.4}
+         style={{
+           filter:
+             immunity > 40
+               ? `drop-shadow(0 0 ${3 + immunity / 25}px ${s.color})`
+               : "none",
+           transition:
+             "stroke 1s ease,stroke-width 0.6s ease,opacity 0.6s ease",
+         }}
+       />
+
+
+       {/* Activity rings */}
+       {rings.map((ring, ri) => {
+         const r = RING_START + ri * GAP;
+         // Fixed thickness — no change with intensity, only FirstTime is thinner
+         const thick = ring.isFirstTime ? 1.5 : 7;
+         const arc = 2 * Math.PI * r;
+         // Arc length = slider value mapped to 23%–70% of circumference
+         const fill = 0.23 + ((ring.idx + 1) / INTENSITY_STEPS) * 0.47;
+         const dur = ringDurs[ring.i] ?? 9;
+         const anim = ri % 2 === 0 ? "spinCW" : "spinCCW";
+         return (
+           <g key={ring.i}>
+             <circle
+               cx={cx}
+               cy={cy}
+               r={r}
+               fill="none"
+               stroke={ring.color}
+               strokeWidth={1.2}
+               opacity={0}
+             />
+             <circle
+               cx={cx}
+               cy={cy}
+               r={r}
+               fill="none"
+               stroke={ring.color}
+               strokeWidth={thick}
+               strokeDasharray={`${arc * fill} ${arc * (1 - fill)}`}
+               strokeLinecap="round"
+               opacity={1}
+               style={{
+                 animation: `${anim} ${dur}s linear infinite`,
+                 filter: `drop-shadow(0 0 ${
+                   ring.isFirstTime ? 1 : 2 + Math.round(ring.idx / 3)
+                 }px ${ring.color}77)`,
+                 transformOrigin: `${cx}px ${cy}px`,
+               }}
+             />
+           </g>
+         );
+       })}
+       {isGlowing && (
+         <circle
+           cx={cx}
+           cy={cy}
+           r={maxR + 12}
+           fill="none"
+           stroke={BP.cyan}
+           strokeWidth={2}
+           opacity={0.22}
+           style={{ animation: "haloPulse 2s ease-in-out infinite" }}
+         />
+       )}
+
+
+       {/* Sparks firing from brain surface */}
+       {sparks.map((spark) => {
+         const BRAIN_R = BRAIN / 2;
+         // Origin: on the brain surface
+         const ox = cx + Math.cos(spark.angle) * BRAIN_R;
+         const oy = cy + Math.sin(spark.angle) * BRAIN_R;
+         // Destination: travel outward
+         const tx = Math.cos(spark.angle) * spark.travel;
+         const ty = Math.sin(spark.angle) * spark.travel;
+         const animName = `spark-${spark.id}`;
+         return (
+           <g key={spark.id}>
+             <style>{`
+               @keyframes ${animName} {
+                 0%   { transform: translate(0,0); opacity: 0.9; r: ${
+                   spark.size
+                 }; }
+                 70%  { transform: translate(${tx}px,${ty}px); opacity: 0.6; }
+                 100% { transform: translate(${tx * 1.15}px,${
+               ty * 1.15
+             }px); opacity: 0; }
+               }
+             `}</style>
+             <circle
+               cx={ox}
+               cy={oy}
+               r={spark.size}
+               fill={spark.color}
+               style={{
+                 animation: `${animName} ${spark.dur}ms ease-out forwards`,
+                 transformOrigin: `${ox}px ${oy}px`,
+                 filter: `drop-shadow(0 0 3px ${spark.color})`,
+               }}
+             />
+           </g>
+         );
+       })}
+     </svg>
+     <div
+       style={{
+         position: "relative",
+         zIndex: 2,
+         animation: "brainFloat 3.5s ease-in-out infinite",
+       }}
+     >
+       <BrainSVG size={BRAIN} />
+     </div>
+   </div>
+ );
+}
+
+
+function StrengthLabel({ immunity }) {
+ const s = getStr(immunity);
+ return (
+   <div
+     style={{
+       textAlign: "center",
+       marginTop: 10,
+       marginBottom: 30,
+       fontFamily: FONTS.body,
+       fontWeight: 600,
+       fontSize: "0.5rem",
+       color: s.color,
+       transition: "color 0.8s ease",
+       opacity: 0.6,
+     }}
+   >
+     {s.label}
+   </div>
+ );
+}
+
+
+// ── Slider ─────────────────────────────────────────────────────────
+function Slider({ steps, value, onChange, fill, dir = "up" }) {
+ const ref = useRef(null),
+   drag = useRef(false);
+ const step = (cx) => {
+   const rect = ref.current?.getBoundingClientRect();
+   if (!rect) return 0;
+   const r = Math.max(0, Math.min(1, (cx - rect.left) / rect.width));
+   return dir === "up" ? Math.round(r * steps) : steps - Math.round(r * steps);
+ };
+ const tPct =
+   dir === "up" ? (value / steps) * 100 : ((steps - value) / steps) * 100;
+ return (
+   <div
+     ref={ref}
+     onPointerDown={(e) => {
+       drag.current = true;
+       ref.current?.setPointerCapture(e.pointerId);
+       onChange(step(e.clientX));
+     }}
+     onPointerMove={(e) => {
+       if (drag.current) onChange(step(e.clientX));
+     }}
+     onPointerUp={() => {
+       drag.current = false;
+     }}
+     onPointerCancel={() => {
+       drag.current = false;
+     }}
+     style={{
+       position: "relative",
+       height: 32,
+       display: "flex",
+       alignItems: "center",
+       cursor: "ew-resize",
+       userSelect: "none",
+       touchAction: "none",
+     }}
+   >
+     <div
+       style={{
+         position: "absolute",
+         left: 0,
+         right: 0,
+         height: 5,
+         background: "rgba(255,255,255,0.0)",
+       }}
+     />
+     <div
+       style={{
+         position: "absolute",
+         left: dir === "up" ? 0 : `${tPct}%`,
+         width: dir === "up" ? `${tPct}%` : `${100 - tPct}%`,
+         height: 9,
+         background: fill,
+         transition: "width .2s ease,left .4s ease",
+         borderRadius: 10,
+         overflow: "hidden", // Ensures the 'fill' doesn't bleed past the corners
+       }}
+     />
+     {value > 0 && (
+       <div
+         style={{
+           position: "absolute",
+           left: `calc(${tPct}% - 11px)`,
+           width: 0,
+           height: 0,
+           zIndex: 2,
+         }}
+       />
+     )}
+   </div>
+ );
+}
+
+
+// ── Activity chip ──────────────────────────────────────────────────
+function ActivityChip({
+ activity,
+ aIdx,
+ intensityIdx,
+ onSet,
+ onClear,
+ expanded,
+ onToggle,
+}) {
+ const active = intensityIdx !== null;
+ const rc = RING_COLORS[aIdx % RING_COLORS.length];
+ const barPct = active ? ((intensityIdx + 1) / INTENSITY_STEPS) * 100 : 0;
+ return (
+   <div
+     style={{
+       borderRadius: 14,
+       overflow: "hidden",
+       background: expanded ? BP.sliderBg : BP.basecolour,
+       transition: "background .4s ease",
+       cursor: "pointer",
+     }}
+     onClick={onToggle}
+   >
+     <div
+       style={{
+         display: "flex",
+         alignItems: "center",
+         gap: 10,
+         padding: "10px 14px 6px",
+       }}
+     >
+       {active && !expanded && (
+         <div
+           style={{
+             width: 8,
+             height: 8,
+             borderRadius: "50%",
+             background: rc,
+             flexShrink: 0,
+             boxShadow: `0 0 4px ${rc}`,
+           }}
+         />
+       )}
+       <span style={{ fontSize: "1.2rem", minWidth: 26 }}>
+         {activity.emoji}
+       </span>
+       <span
+         style={{
+           fontFamily: FONTS.body,
+           fontWeight: active ? 600 : 400,
+           fontSize: "1rem",
+           color: expanded ? BP.sliderFg : active ? BP.textMed : BP.textLight,
+           flex: 1,
+         }}
+       >
+         {activity.label}
+       </span>
+       {expanded && (
+         <button
+           onClick={(e) => {
+             e.stopPropagation();
+             onToggle();
+           }}
+           style={{
+             width: 28,
+             height: 28,
+             borderRadius: "50%",
+             border: "none",
+             background: BP.roundbuttons,
+             color: BP.white,
+             fontSize: "0.85rem",
+             cursor: "pointer",
+             display: "flex",
+             alignItems: "center",
+             justifyContent: "center",
+             flexShrink: 0,
+           }}
+         >
+           ✓
+         </button>
+       )}
+       {!active && !expanded && (
+         <button
+           onClick={(e) => {
+             e.stopPropagation();
+             onSet(0);
+           }}
+           style={{
+             width: 26,
+             height: 26,
+             borderRadius: "50%",
+             border: "none",
+             background: BP.pink,
+             color: BP.white,
+             fontSize: "0.95rem",
+             cursor: "pointer",
+             display: "flex",
+             alignItems: "center",
+             justifyContent: "center",
+             flexShrink: 0,
+           }}
+         >
+           +
+         </button>
+       )}
+     </div>
+     {active && !expanded && (
+       <div
+         style={{
+           margin: "0 14px 8px",
+           height: 3,
+           background: "rgba(0,0,0,0.07)",
+           borderRadius: 3,
+           overflow: "hidden",
+         }}
+       >
+         <div
+           style={{
+             height: "100%",
+             width: `${barPct}%`,
+             background: rc,
+             borderRadius: 3,
+             transition: "width .4s ease",
+             boxShadow: `0 0 4px ${rc}66`,
+           }}
+         />
+       </div>
+     )}
+     {!active && !expanded && <div style={{ height: 4 }} />}
+     {expanded && (
+       <div
+         style={{ padding: "4px 14px 14px" }}
+         onClick={(e) => e.stopPropagation()}
+       >
+         <Slider
+           steps={INTENSITY_STEPS}
+           value={active ? intensityIdx + 1 : 0}
+           onChange={(v) => (v === 0 ? onClear() : onSet(v - 1))}
+           fill={rc}
+           dir="up"
+         />
+       </div>
+     )}
+   </div>
+ );
+}
+
+
+// ── Schedule ───────────────────────────────────────────────────────
+function Schedule({ tvToday, tvTomorrow }) {
+ const todayIdx = (new Date().getDay() + 6) % 7;
+ const tomorrowIdx = (todayIdx + 1) % 7;
+
+
+ const todayStatusText =
+   tvToday === "yes" ? "TV Time" : "No, brain is still zapping TV germs";
+ const todayStatusColor = tvToday === "yes" ? BP.pink : BP.pink;
+ const todayEmoji = tvToday === "yes" ? "🏆" : "⚡";
+
+
+ return (
+   <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+     {/* Today */}
+     <div>
+       <div
+         style={{
+           display: "flex",
+           alignItems: "center",
+           gap: 16,
+           padding: "20px 24px 16px",
+           marginTop: 50,
+           borderRadius: 24,
+           background: BP.basecolour,
+         }}
+       >
+         <div style={{ fontSize: "2.4rem" }}>{todayEmoji}</div>
+         <div style={{ flex: 1 }}>
+           <div
+             style={{
+               fontFamily: FONTS.body,
+               fontWeight: 700,
+               fontSize: "1rem",
+               color: BP.text,
+             }}
+           >
+             Now: Is it TV time?
+           </div>
+           <div
+             style={{
+               fontFamily: FONTS.body,
+               fontSize: "1rem",
+               color: todayStatusColor,
+               marginTop: 5,
+               fontWeight: 600,
+             }}
+           >
+             {todayStatusText}
+           </div>
+         </div>
+       </div>
+       {tvToday === "no" && (
+         <div
+           style={{
+             margin: "2px 4px 0",
+             padding: "10px 5px",
+             borderRadius: 10,
+             background: "rgba(230,12,120,0.1)",
+             border: `0px solid ${BP.pink}44`,
+           }}
+         >
+           <div
+             style={{
+               fontFamily: FONTS.body,
+               fontSize: "0.72rem",
+               color: BP.textLight,
+               lineHeight: 1.5,
+               textAlign: "center",
+             }}
+           >
+             How can you help it zap faster? ⚡
+           </div>
+         </div>
+       )}
+     </div>
+
+
+     {/* Tomorrow */}
+     <div
+       style={{
+         display: "flex",
+         alignItems: "center",
+         gap: 16,
+         padding: "20px 24px 16px",
+         marginTop: 50,
+         borderRadius: 24,
+         background: BP.basecolour,
+       }}
+     >
+       <div style={{ fontSize: "2.4rem" }}>🔸</div>
+       <div style={{ flex: 1 }}>
+         <div
+           style={{
+             fontFamily: FONTS.body,
+             fontWeight: 700,
+             fontSize: "1rem",
+             color: BP.text,
+           }}
+         >
+           Tomorrow
+         </div>
+         <div
+           style={{
+             fontFamily: FONTS.body,
+             fontSize: "0.78rem",
+             color: BP.textLight,
+             marginTop: 5,
+             animation: "softPulse 2.8s ease-in-out infinite",
+           }}
+         >
+           Counting germs...
+         </div>
+       </div>
+     </div>
+   </div>
+ );
+}
+
+
+// ── Modals ─────────────────────────────────────────────────────────
+function WhatModal({ kid, onConfirm, onClose }) {
+ const [text, setText] = useState("");
+ return (
+   <div
+     style={{
+       position: "fixed",
+       inset: 0,
+       zIndex: 8000,
+       background: "rgba(6,40,40,0.6)",
+       backdropFilter: "blur(10px)",
+       display: "flex",
+       alignItems: "center",
+       justifyContent: "center",
+     }}
+     onClick={onClose}
+   >
+     <div
+       onClick={(e) => e.stopPropagation()}
+       style={{
+         background: BP.white,
+         borderRadius: 32,
+         padding: "32px 24px",
+         width: 300,
+         boxShadow: "0 32px 80px rgba(6,40,40,0.25)",
+         animation: "modalIn .4s cubic-bezier(0.34,1.56,0.64,1)",
+         textAlign: "center",
+       }}
+     >
+       <div style={{ fontSize: "2.4rem", marginBottom: 8 }}>{kid.emoji}</div>
+       <div
+         className="elsie"
+         style={{ fontSize: "1.6rem", color: BP.textDark, marginBottom: 20 }}
+       >
+         What did {kid.name} do?
+       </div>
+       <input
+         autoFocus
+         value={text}
+         onChange={(e) => setText(e.target.value)}
+         onKeyDown={(e) =>
+           e.key === "Enter" && text.trim() && onConfirm(text.trim())
+         }
+         placeholder="spoke in Hindi, ate green beans..."
+         style={{
+           width: "100%",
+           padding: "12px 16px",
+           borderRadius: 16,
+           marginBottom: 10,
+           border: `2px solid ${BP.roundbuttonsTint}`,
+           fontFamily: FONTS.body,
+           fontSize: "0.8rem",
+           color: BP.textDark,
+           background: BP.roundbuttonsTint,
+           outline: "none",
+           boxSizing: "border-box",
+         }}
+       />
+       <button
+         onClick={() => text.trim() && onConfirm(text.trim())}
+         disabled={!text.trim()}
+         style={{
+           marginTop: 14,
+           width: "70%",
+           padding: "13px",
+           borderRadius: 20,
+           border: "none",
+           background: BP.pink,
+           fontFamily: FONTS.body,
+           fontWeight: 700,
+           fontSize: "0.95rem",
+           color: BP.textLight,
+           cursor: text.trim() ? "pointer" : "default",
+           boxShadow: text.trim() ? `0 4px 20px ${BP.pink}44` : "none",
+         }}
+       >
+         ✨ Make Memories
+       </button>
+     </div>
+   </div>
+ );
+}
+
+
+function NamePicker({ onSelect, onClose }) {
+ return (
+   <div
+     style={{
+       position: "fixed",
+       inset: 0,
+       zIndex: 8000,
+       background: "rgba(6,40,40,0.6)",
+       backdropFilter: "blur(10px)",
+       display: "flex",
+       alignItems: "center",
+       justifyContent: "center",
+     }}
+     onClick={onClose}
+   >
+     <div
+       onClick={(e) => e.stopPropagation()}
+       style={{
+         background: BP.white,
+         borderRadius: 32,
+         padding: "32px 24px",
+         width: 300,
+         boxShadow: "0 32px 80px rgba(6,40,40,0.25)",
+         animation: "modalIn .4s cubic-bezier(0.34,1.56,0.64,1)",
+         textAlign: "center",
+       }}
+     >
+       <div
+         className="elsie"
+         style={{ fontSize: "2rem", color: BP.textDark, marginBottom: 4 }}
+       >
+         Who did it?
+       </div>
+       <div
+         style={{
+           fontFamily: FONTS.body,
+           fontSize: "0.85rem",
+           color: BP.textDark,
+           marginBottom: 24,
+         }}
+       >
+         Pick the brain that tried something new
+       </div>
+       {KIDS.map((k) => (
+         <button
+           key={k.id}
+           onClick={() => onSelect(k)}
+           style={{
+             display: "flex",
+             alignItems: "center",
+             gap: 16,
+             padding: "14px 18px",
+             borderRadius: 20,
+             background: k.color,
+             border: "none",
+             cursor: "pointer",
+             width: "100%",
+             marginBottom: 8,
+           }}
+         >
+           <span style={{ fontSize: "2.2rem" }}>{k.emoji}</span>
+           <span
+             style={{
+               fontFamily: FONTS.body,
+               fontWeight: 700,
+               fontSize: "1.1rem",
+               color: BP.textDark,
+             }}
+           >
+             {k.name}
+           </span>
+         </button>
+       ))}
+     </div>
+   </div>
+ );
+}
+
+
+function ShootingStar({ kid, activityName, onDone }) {
+ const [phase, setPhase] = useState("enter");
+ useEffect(() => {
+   const t1 = setTimeout(() => setPhase("hold"), 400);
+   const t2 = setTimeout(() => setPhase("exit"), 3200);
+   const t3 = setTimeout(onDone, 3800);
+   return () => {
+     clearTimeout(t1);
+     clearTimeout(t2);
+     clearTimeout(t3);
+   };
+ }, []);
+ return (
+   <div
+     onClick={onDone}
+     style={{
+       position: "fixed",
+       inset: 0,
+       zIndex: 9999,
+       display: "flex",
+       alignItems: "center",
+       justifyContent: "center",
+       background: phase === "exit" ? "transparent" : "rgba(6,20,20,0.9)",
+       backdropFilter: phase === "exit" ? "none" : "blur(4px)",
+       transition: "all .5s ease",
+     }}
+   >
+     <div
+       style={{
+         position: "absolute",
+         top: "25%",
+         left: "-5%",
+         width: "110%",
+         height: 3,
+         background: `linear-gradient(90deg,transparent,${BP.cyan},${BP.white},${BP.pink},transparent)`,
+         animation: "shoot .6s ease-out both",
+         borderRadius: 4,
+       }}
+     />
+     {[...Array(10)].map((_, i) => (
+       <div
+         key={i}
+         style={{
+           position: "absolute",
+           left: `${6 + i * 9}%`,
+           top: `${14 + (i % 4) * 13}%`,
+           fontSize: i % 2 === 0 ? "1rem" : "0.6rem",
+           color: [BP.cyan, BP.pink, BP.white, "#80F8FF"][i % 4],
+           animation: `starPop .5s ease ${i * 0.06}s both`,
+           opacity: phase === "exit" ? 0 : 1,
+           transition: "opacity .4s",
+         }}
+       >
+         ✦
+       </div>
+     ))}
+     <div
+       style={{
+         background: BP.white,
+         borderRadius: 32,
+         padding: "40px 28px 28px",
+         maxWidth: 300,
+         width: "85%",
+         boxShadow: "0 32px 80px rgba(6,20,20,0.4)",
+         transform:
+           phase === "enter"
+             ? "scale(0.65) translateY(24px)"
+             : phase === "exit"
+             ? "scale(0.9)"
+             : "scale(1) translateY(0)",
+         opacity: phase === "enter" ? 0 : phase === "exit" ? 0 : 1,
+         transition: "all .45s cubic-bezier(0.34,1.56,0.64,1)",
+         position: "relative",
+         overflow: "hidden",
+         textAlign: "center",
+       }}
+     >
+       <div
+         style={{
+           position: "absolute",
+           top: 0,
+           left: 0,
+           right: 0,
+           height: 5,
+           background: `linear-gradient(90deg,${BP.pink},${BP.roundbuttons},${BP.cyan},${BP.roundbuttons},${BP.pink})`,
+         }}
+       />
+       <div
+         style={{
+           fontSize: "3.8rem",
+           animation: "starSpin .7s ease .3s both",
+           display: "block",
+         }}
+       >
+         🌟
+       </div>
+       <div
+         className="elsie"
+         style={{ fontSize: "1.8rem", color: BP.textDark, marginTop: 8 }}
+       >
+         First Time!
+       </div>
+       <div
+         style={{
+           display: "inline-flex",
+           alignItems: "center",
+           gap: 8,
+           marginTop: 12,
+           background: kid.color,
+           borderRadius: 20,
+           padding: "8px 16px",
+         }}
+       >
+         <span style={{ fontSize: "1.6rem" }}>{kid.emoji}</span>
+         <span
+           style={{
+             fontFamily: FONTS.body,
+             fontWeight: 700,
+             fontSize: "1rem",
+             color: BP.textDark,
+           }}
+         >
+           {kid.name}
+         </span>
+       </div>
+       <div
+         style={{
+           fontFamily: FONTS.body,
+           fontWeight: 600,
+           fontSize: "0.9rem",
+           color: BP.textDark,
+           marginTop: 12,
+           fontStyle: "italic",
+         }}
+       >
+         "{activityName}"
+       </div>
+       <div
+         style={{
+           fontFamily: FONTS.body,
+           fontSize: "0.72rem",
+           color: BP.textDark,
+           marginTop: 26,
+           opacity: 0.4,
+         }}
+       >
+         saved to your Brain Bank forever
+       </div>
+       <div
+         style={{
+           marginTop: 6,
+           fontFamily: FONTS.body,
+           fontSize: "0.62rem",
+           color: BP.textDark,
+           opacity: 0.4,
+         }}
+       >
+         tap to continue
+       </div>
+     </div>
+   </div>
+ );
+}
+
+
+// ── Main ───────────────────────────────────────────────────────────
+export default function BrainBank() {
+ const [immunity, setImmunity] = useState(SLEEP_BASE);
+ const [tab, setTab] = useState("immunity");
+ const [secretTaps, setSecretTaps] = useState(0);
+ const [secretMode, setSecretMode] = useState(false);
+ const [tvToday, setTvToday] = useState("no");
+ const [tvTomorrow, setTvTomorrow] = useState(null);
+ const [intensities, setIntensities] = useState({});
+ const [tvLevel, setTvLevel] = useState(0);
+ const [expanded, setExpanded] = useState(null);
+ // germLevel: 0 = no germs, 1 = normal (default), 2 = medium, 3 = high screen time
+ const [germLevel, setGermLevel] = useState(1);
+ const [loaded, setLoaded] = useState(false);
+ const lastReset = useRef(null);
+
+
+ useEffect(() => {
+   (async () => {
+     const s = await load("bb-v15");
+     if (s) {
+       if (typeof s.tvToday !== "undefined") setTvToday(s.tvToday);
+       if (typeof s.tvTomorrow !== "undefined") setTvTomorrow(s.tvTomorrow);
+       if (typeof s.immunity === "number") setImmunity(s.immunity);
+       if (s.intensities) setIntensities(s.intensities);
+       if (typeof s.tvLevel === "number") setTvLevel(s.tvLevel);
+       if (typeof s.germLevel === "number") setGermLevel(s.germLevel);
+       if (s.lastReset) lastReset.current = s.lastReset;
+     }
+     setLoaded(true);
+   })();
+ }, []);
+
+
+ useEffect(() => {
+   if (!loaded) return;
+   save("bb-v15", {
+     tvToday,
+     tvTomorrow,
+     immunity,
+     intensities,
+     tvLevel,
+     germLevel,
+     lastReset: lastReset.current,
+   });
+ }, [tvToday, tvTomorrow, immunity, intensities, tvLevel, germLevel, loaded]);
+
+
+ useEffect(() => {
+   if (!loaded) return;
+   const check = () => {
+     const now = new Date(),
+       ds = now.toDateString();
+     if (now.getHours() >= 6 && lastReset.current !== ds) {
+       lastReset.current = ds;
+       setImmunity(SLEEP_BASE);
+       setIntensities({});
+       setTvLevel(0);
+       setExpanded(null);
+       setTvToday("no");
+       setTvTomorrow(null);
+       setGermLevel(1);
+     }
+   };
+   check();
+   const iv = setInterval(check, 60000);
+   return () => clearInterval(iv);
+ }, [loaded]);
+
+
+ const isGlowing = immunity >= GLOW;
+ const pts = (a, idx) => Math.round(a.power * intensityMult(idx));
+
+
+ const setInt = (activity, newIdx) => {
+   const prev = intensities[activity.id] ?? null;
+   const remove = prev !== null ? pts(activity, prev) : 0;
+   setImmunity((p) =>
+     Math.min(100, Math.max(0, p - remove + pts(activity, newIdx)))
+   );
+   setIntensities((p) => ({ ...p, [activity.id]: newIdx }));
+ };
+
+
+ const clearAct = (activity) => {
+   const prev = intensities[activity.id] ?? null;
+   if (prev === null) return;
+   setImmunity((p) => Math.max(0, p - pts(activity, prev)));
+   setIntensities((p) => {
+     const n = { ...p };
+     delete n[activity.id];
+     return n;
+   });
+   setExpanded(null);
+ };
+
+
+ const handleTitle = () => {}; // title no longer triggers secret mode
+
+
+ const handleAdminTap = () => {
+   if (secretMode) {
+     // Already unlocked — single tap navigates, 5 taps deactivates
+     const n = secretTaps + 1;
+     if (n >= 5) {
+       setSecretTaps(0);
+       setSecretMode(false);
+       setTab("immunity");
+     } else {
+       setSecretTaps(n);
+       setTab("parent");
+       setTimeout(() => setSecretTaps(0), 1500);
+     }
+   } else {
+     // Locked — count taps to unlock
+     const n = secretTaps + 1;
+     setSecretTaps(n);
+     if (n >= 5) {
+       setSecretTaps(0);
+       setSecretMode(true);
+       setTab("parent");
+     } else {
+       setTimeout(() => setSecretTaps(0), 1500);
+     }
+   }
+ };
+
+
+ const tabs = [
+   { id: "immunity", label: "Immunity" },
+   { id: "parent", label: "Admin", onPress: handleAdminTap, isAdmin: true },
+   { id: "schedule", label: "Schedule" },
+ ];
+
+
+ if (!loaded)
+   return (
+     <div
+       style={{
+         minHeight: "100vh",
+         background: BP.basecolour,
+         display: "flex",
+         alignItems: "center",
+         justifyContent: "center",
+       }}
+     >
+       <span style={{ fontFamily: FONTS.body, color: BP.pink }}>
+         Loading...
+       </span>
+     </div>
+   );
+
+
+ return (
+   <div
+     style={{
+       minHeight: "100vh",
+       background: BP.basecolour,
+       paddingBottom: 120,
+     }}
+     onClick={() => setExpanded(null)}
+   >
+     <style>{`
+       @import url('${FONTS.importUrl}');
+       .elsie{font-family:${FONTS.title}!important;font-weight:900;}
+       @keyframes spinCW{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+       @keyframes spinCCW{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+       @keyframes brainFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+       @keyframes haloPulse{0%,100%{opacity:.2}50%{opacity:.55}}
+       @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+       @keyframes modalIn{from{opacity:0;transform:scale(.82) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+       @keyframes shoot{from{transform:translateX(-100%);opacity:0}to{transform:translateX(0);opacity:1}}
+       @keyframes starPop{0%{opacity:0;transform:scale(0) rotate(-20deg)}70%{transform:scale(1.3) rotate(8deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+       @keyframes starSpin{from{transform:rotate(-180deg) scale(0);opacity:0}to{transform:rotate(0) scale(1);opacity:1}}
+       @keyframes softPulse{0%,100%{opacity:1}50%{opacity:.4}}
+       button:active{transform:scale(.94)!important}
+       *{box-sizing:border-box}
+     `}</style>
+
+
+     {/* no modals */}
+
+
+     <div
+       style={{ maxWidth: 420, margin: "0 auto", padding: "32px 16px 0" }}
+       onClick={(e) => e.stopPropagation()}
+     >
+       {/* Header */}
+       <div
+         onClick={handleTitle}
+         style={{
+           textAlign: "center",
+           marginBottom: 20,
+           cursor: "pointer",
+           userSelect: "none",
+         }}
+       >
+         <div
+           className="elsie"
+           style={{
+             fontSize: "2.4rem",
+             color: BP.text,
+             lineHeight: 1,
+             letterSpacing: 1,
+           }}
+         >
+           Zap Zap
+         </div>
+         {secretMode && (
+           <div
+             style={{
+               display: "inline-block",
+               marginTop: 6,
+               background: BP.pink,
+               borderRadius: 20,
+               padding: "3px 14px",
+               fontFamily: FONTS.body,
+               fontWeight: 700,
+               fontSize: "0.65rem",
+               color: BP.white,
+             }}
+           >
+             🔓 admin unlocked
+           </div>
+         )}
+       </div>
+
+
+       {/* Kids */}
+       <div
+         style={{
+           display: "flex",
+           justifyContent: "center",
+           gap: 22,
+           marginBottom: 16,
+         }}
+       >
+         {KIDS.map((k) => (
+           <div key={k.id} style={{ textAlign: "center" }}>
+             <div
+               style={{
+                 width: 54,
+                 height: 54,
+                 borderRadius: "50%",
+                 background: k.color,
+                 display: "flex",
+                 alignItems: "center",
+                 justifyContent: "center",
+                 fontSize: "1.8rem",
+                 margin: "0 auto 5px",
+                 boxShadow: `0 3px 12px ${k.color}88`,
+               }}
+             >
+               {k.emoji}
+             </div>
+             <div
+               style={{
+                 fontFamily: FONTS.body,
+                 fontWeight: 600,
+                 fontSize: "0.65rem",
+                 color: BP.textLight,
+               }}
+             >
+               {k.name}
+             </div>
+           </div>
+         ))}
+       </div>
+
+
+       {/* Content */}
+       {tab === "immunity" && (
+         <div
+           style={{
+             animation: "fadeIn .35s ease",
+             display: "flex",
+             flexDirection: "column",
+             gap: 4,
+           }}
+         >
+           <div
+             style={{
+               textAlign: "center",
+               padding: "8px 0 4px",
+               overflow: "visible",
+             }}
+           >
+             <BrainShield
+               intensities={intensities}
+               immunity={immunity}
+               isGlowing={isGlowing}
+               germLevel={germLevel}
+             />
+           </div>
+           {ACTIVITIES.map((a, i) => (
+             <div
+               key={a.id}
+               style={{ animation: `fadeIn .3s ease ${i * 0.04}s both` }}
+               onClick={(e) => e.stopPropagation()}
+             >
+               <ActivityChip
+                 activity={a}
+                 aIdx={i}
+                 intensityIdx={intensities[a.id] ?? null}
+                 onSet={(idx) => {
+                   setInt(a, idx);
+                   setExpanded(a.id);
+                 }}
+                 onClear={() => clearAct(a)}
+                 expanded={expanded === a.id}
+                 onToggle={() =>
+                   setExpanded((prev) => (prev === a.id ? null : a.id))
+                 }
+               />
+             </div>
+           ))}
+         </div>
+       )}
+
+
+       {tab === "schedule" && (
+         <div style={{ animation: "fadeIn .35s ease" }}>
+           <Schedule tvToday={tvToday} tvTomorrow={tvTomorrow} />
+         </div>
+       )}
+
+
+       {tab === "parent" && secretMode && (
+         <div
+           style={{
+             animation: "fadeIn .35s ease",
+             display: "flex",
+             flexDirection: "column",
+             gap: 12,
+           }}
+         >
+           {/* Today TV status */}
+           <div
+             style={{
+               fontFamily: FONTS.body,
+               fontSize: "0.7rem",
+               color: BP.textLight,
+               opacity: 0.6,
+               marginBottom: 4,
+             }}
+           >
+             Today's screen time
+           </div>
+           <div style={{ display: "flex", gap: 8 }}>
+             <button
+               onClick={() => setTvToday("yes")}
+               style={{
+                 flex: 1,
+                 padding: "14px",
+                 borderRadius: 16,
+                 border: "none",
+                 background:
+                   tvToday === "yes" ? BP.pink : "rgba(255,255,255,0.08)",
+                 fontFamily: FONTS.body,
+                 fontWeight: 700,
+                 fontSize: "0.9rem",
+                 color: BP.textLight,
+                 cursor: "pointer",
+                 transition: "background .2s",
+               }}
+             >
+               🏆 Yes
+             </button>
+             <button
+               onClick={() => setTvToday("no")}
+               style={{
+                 flex: 1,
+                 padding: "14px",
+                 borderRadius: 16,
+                 border: "none",
+                 background:
+                   tvToday === "no" ? BP.pink : "rgba(255,255,255,0.08)",
+                 fontFamily: FONTS.body,
+                 fontWeight: 700,
+                 fontSize: "0.9rem",
+                 color: BP.textLight,
+                 cursor: "pointer",
+                 transition: "background .2s",
+               }}
+             >
+               🦠 No
+             </button>
+           </div>
+
+
+           {/* Germ level */}
+           <div
+             style={{
+               fontFamily: FONTS.body,
+               fontSize: "0.7rem",
+               color: BP.textLight,
+               opacity: 0.6,
+               marginBottom: 4,
+               marginTop: 8,
+             }}
+           >
+             Screen germ level
+           </div>
+           {[
+             {
+               level: 0,
+               label: "No germs",
+               sub: "Clean, okay for screen time",
+               icon: "✨",
+             },
+             {
+               level: 1,
+               label: "Normal",
+               sub: "Low opacity · fewer germs",
+               icon: "🦠",
+             },
+             {
+               level: 2,
+               label: "Medium screen time",
+               sub: "More germs · higher opacity",
+               icon: "🦠🦠",
+             },
+             {
+               level: 3,
+               label: "High screen time",
+               sub: "Many germs · very visible",
+               icon: "🦠🦠🦠",
+             },
+           ].map((opt) => (
+             <button
+               key={opt.level}
+               onClick={() => setGermLevel(opt.level)}
+               style={{
+                 display: "flex",
+                 flexDirection: "column",
+                 alignItems: "flex-start",
+                 padding: "14px 18px",
+                 borderRadius: 16,
+                 border: "none",
+                 background:
+                   germLevel === opt.level
+                     ? BP.pink
+                     : "rgba(255,255,255,0.08)",
+                 cursor: "pointer",
+                 textAlign: "left",
+                 transition: "background .2s",
+               }}
+             >
+               <span
+                 style={{
+                   fontFamily: FONTS.body,
+                   fontWeight: 700,
+                   fontSize: "0.9rem",
+                   color: BP.textLight,
+                 }}
+               >
+                 {opt.icon} {opt.label}
+               </span>
+               <span
+                 style={{
+                   fontFamily: FONTS.body,
+                   fontSize: "0.68rem",
+                   color: BP.textLight,
+                   opacity: 0.6,
+                   marginTop: 3,
+                 }}
+               >
+                 {opt.sub}
+               </span>
+             </button>
+           ))}
+         </div>
+       )}
+     </div>
+
+
+     {/* Bottom tabs */}
+     <div
+       style={{
+         position: "fixed",
+         bottom: 0,
+         left: 0,
+         right: 0,
+         zIndex: 100,
+         background: BP.basecolour,
+         borderTop: `1px solid rgba(255,255,255,0.06)`,
+       }}
+     >
+       <div
+         style={{
+           maxWidth: 420,
+           margin: "0 auto",
+           display: "flex",
+           padding: "8px 16px 10px",
+           gap: 4,
+         }}
+       >
+         {tabs.map((t) => (
+           <button
+             key={t.id}
+             onClick={() => {
+               if (t.onPress) t.onPress();
+               else setTab(t.id);
+             }}
+             style={{
+               flex: 1,
+               padding: "8px 0",
+               borderRadius: 12,
+               background:
+                 !t.isAdmin && tab === t.id
+                   ? "rgba(255,255,255,0.14)"
+                   : "transparent",
+               border:
+                 !t.isAdmin && tab === t.id
+                   ? "1px solid rgba(255,255,255,0.18)"
+                   : "1px solid transparent",
+               color: t.isAdmin
+                 ? secretMode
+                   ? "rgba(255,255,255,0.5)"
+                   : "rgba(255,255,255,0.04)"
+                 : tab === t.id
+                 ? "rgba(255,255,255,0.9)"
+                 : "rgba(255,255,255,0.35)",
+               fontFamily: FONTS.body,
+               fontWeight: tab === t.id ? 700 : 400,
+               fontSize: "0.75rem",
+               cursor: "pointer",
+               transition: "all .2s",
+             }}
+           >
+             {t.label}
+           </button>
+         ))}
+       </div>
+       <div
+         style={{
+           textAlign: "center",
+           paddingBottom: 6,
+           fontFamily: FONTS.body,
+           fontSize: "0.52rem",
+           color: BP.textLight,
+           opacity: 0.4,
+         }}
+       >
+         Zap Zap · Family Defense Lab
+       </div>
+     </div>
+   </div>
+ );
+}
+
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
