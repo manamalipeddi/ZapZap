@@ -454,6 +454,11 @@ function BrainShield({ intensities, immunity, isGlowing, germLevel = 0 }) {
          // Origin: on the brain surface
          const ox = cx + Math.cos(spark.angle) * BRAIN_R;
          const oy = cy + Math.sin(spark.angle) * BRAIN_R;
+       
+        // Calculate the end of the line based on the random length
+        const x2 = ox + Math.cos(spark.angle) * spark.length;
+        const y2 = oy + Math.sin(spark.angle) * spark.length;
+       
          // Destination: travel outward
          const tx = Math.cos(spark.angle) * spark.travel;
          const ty = Math.sin(spark.angle) * spark.travel;
