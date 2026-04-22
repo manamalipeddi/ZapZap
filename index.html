@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Zap Zap</title>
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#290b47"> <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <style>
+    /* Clean slate: no scrolling, no bounce, no white flashes */
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #290b47; 
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    #root {
+      height: 100%;
+      width: 100%;
+    }
+
+    /* Prevents blue highlights when kids tap buttons aggressively */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="module" src="./brain-shield-v24b.jsx"></script>
+</body>
+</html>
