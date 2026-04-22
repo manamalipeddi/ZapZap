@@ -467,23 +467,33 @@ function BrainShield({ intensities, immunity, isGlowing, germLevel = 0 }) {
                  100% { transform: translate(${tx * 1.15}px,${ty * 1.15}px); opacity: 0; }
                }
              `}</style>
-            <line
-        x1={ox}
-        y1={oy}
-        x2={x2}
-        y2={y2}
-        stroke={spark.color}
-        strokeWidth={spark.size} // Thickness
-        strokeLinecap="round" // Makes the zap ends look polished
+             <circle
+                cx={ox}
+                cy={oy}
+                r={spark.size}
+                fill={spark.color}
+                style={{
+                  animation: `${animName} ${spark.dur}ms ease-out forwards`,
+                  transformOrigin: `${ox}px ${oy}px`,
+                  filter: `drop-shadow(0 0 3px ${spark.color})`,
+                }}
+              />
+            </g>
+          );
+        })}
+      </svg>
+      <div
         style={{
-          animation: `${animName} ${spark.dur}ms ease-out forwards`,
-          transformOrigin: `${ox}px ${oy}px`,
-          filter: `drop-shadow(0 0 3px ${spark.color})`,
+          position: "relative",
+          zIndex: 2,
+          animation: "brainFloat 3.5s ease-in-out infinite",
         }}
-      />
-    </g>
+      >
+        <BrainSVG size={BRAIN} />
+      </div>
+    </div>
   );
-})}
+}
 
 
 function StrengthLabel({ immunity }) {
