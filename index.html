@@ -16,52 +16,41 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
-    /* Clean UI Shell */
     body, html {
       margin: 0; padding: 0;
       width: 100%; height: 100%;
       background-color: #290b47; 
       overflow: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, sans-serif;
     }
     #root { height: 100%; width: 100%; }
     * { -webkit-tap-highlight-color: transparent; outline: none; box-sizing: border-box; }
+    
+    @keyframes spinCW { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes spinCCW { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+    @keyframes brainFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
   </style>
 </head>
 <body>
   <div id="root"></div>
 
   <script type="text/babel" data-presets="react">
-    // We extract hooks directly from the React object since we aren't using 'import'
     const { useState, useEffect, useRef } = React;
 
     const BP = {
-      pink: "#e60c78",
-      roundbuttons: "#290b47",
-      white: "#FFFF11",
-      cyan: "#00F0FF",
-      basecolour: "#290b47",
-      roundbuttonsTint: "#E6F7F7",
-      text: "#FFFFFF",
-      textMed: "#FFFFFF",
-      textLight: "#FFFFFF",
-      textDark: "#290b47",
-      coral: "#E05070",
-      gold: "#D4A020",
-      sliderBg: "#e60c78",
-      sliderFg: "#290b47",
+      pink: "#e60c78", white: "#FFFF11", cyan: "#00F0FF",
+      basecolour: "#290b47", text: "#FFFFFF", textLight: "#FFFFFF",
     };
 
     const FONTS = {
       importUrl: "https://fonts.googleapis.com/css2?family=Henny+Penny&family=Montserrat:wght@600&display=swap",
-      title: "'Henny Penny', system-ui, serif",
-      body: "'Montserrat', Verdana, sans-serif",
+      title: "'Henny Penny', cursive",
+      body: "'Montserrat', sans-serif",
     };
 
     const RING_COLORS = ["#F5C7F2", "#00FFC5", "#FFFD77", "#85C7F2", "#FF5F59", "#B2B09B", "#E3B5A4", "#FFB300"];
     const INTENSITY_STEPS = 9;
     const intensityMult = (idx) => 0.1 + (idx / (INTENSITY_STEPS - 1)) * 0.9;
-    const TV_POWER = 15;
     const SLEEP_BASE = 10;
 
     const ACTIVITIES = [
@@ -80,107 +69,44 @@
       { id: "astrid", name: "Astrid", emoji: "👶🏻", color: "#f42a53" },
     ];
 
-    const STRENGTH = [
-      { min: 0, max: 14, label: "Thin Protection", color: BP.textLight },
-      { min: 15, max: 29, label: "Small Protection", color: BP.textLight },
-      { min: 30, max: 49, label: "Some Protection", color: BP.textLight },
-      { min: 50, max: 64, label: "Good Protection", color: BP.textLight },
-      { min: 65, max: 79, label: "Strong Protection", color: BP.textLight },
-      { min: 80, max: 100, label: "Super Strong Protection! 💪", color: BP.textLight },
-    ];
-    const getStr = (lv) => STRENGTH.find((s) => lv >= s.min && lv <= s.max) || STRENGTH[0];
-
-    // LocalStorage Helper (Simplified for Browser)
     const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
-    const load = (k) => {
-      const val = localStorage.getItem(k);
-      return val ? JSON.parse(val) : null;
-    };
+    const load = (k) => { const val = localStorage.getItem(k); return val ? JSON.parse(val) : null; };
 
     function BrainSVG({ size = 100 }) {
       return (
-        <svg width={size} height={size} viewBox="0 0 36 36">
-          <path d="M50,82 C36,82 22,74 18,62 C14,50 16,38 22,30 C28,22 36,18 42,20 C44,16 48,14 52,15 L52,82 Z" fill="url(#bg1)" />
-          <path d="M50,82 C64,82 78,74 82,62 C86,50 84,38 78,30 C72,22 64,18 58,20 C56,16 52,14 48,15 L48,82 Z" fill="url(#bg2)" />
-          <path fill="#EA596E" d="M29.896 26.667c.003.283-.07.653-.146.958c-.531 2.145-2.889 4.552-6.208 4.333c-3.008-.198-5.458-1.642-5.458-3.667s2.444-3.667 5.458-3.667s6.335.018 6.354 2.043z" />
-          <path fill="#DD2E44" d="M23.542 24.964c-1.619 0-5.314.448-6.162.448c-1.498 0-2.713.94-2.713 2.1c0 .558.286 1.062.744 1.438c0 0 1.006 1.009 2.818.525c.793-.212 2.083-1.786 4.354-2.036c1.131-.125 3.25.75 6.974.771c.16-.344.193-.583.193-.583c0-2.027-3.194-2.663-6.208-2.663z" />
-          <path fill="#F4ABBA" d="M29.75 27.625s2.184-.443 3.542-2.229c1.583-2.083 1.375-4.312 1.375-4.312c1.604-3-.5-5.813-.5-5.813C33.958 12.104 32 10.792 32 10.792c-1.271-3.021-4.083-3.833-4.083-3.833c-2.208-2.583-6.125-2.5-6.125-2.5s-3.67-1.345-8.708.167c-.833.25-3.625.833-5.667 2.083C.981 10.649.494 16.793.584 17.792C1.083 23.375 5 24.375 7.5 24.958c.583 1.583 2.729 4.5 6.583 3.417c4.75-.833 6.75-2.25 7.917-2.25s4.417 1.25 7.75 1.5z" />
-          <g fill="#EA596E">
-            <path d="M17.737 18.648c2.328-1.255 3.59-1.138 4.704-1.037c.354.032.689.057 1.028.055c1.984-.045 3.591-.881 4.302-1.69a.501.501 0 0 0-.752-.661c-.548.624-1.899 1.313-3.573 1.351c-.3.009-.601-.021-.913-.05c-1.195-.111-2.679-.247-5.271 1.152c-.665.359-1.577.492-2.565.592c-2.197-3.171-.875-5.933-.497-6.591c.037.002.073.014.111.014c.4 0 .802-.098 1.166-.304a.5.5 0 0 0-.492-.87a1.426 1.426 0 0 1-1.88-.467a.5.5 0 0 0-.841.539c.237.371.571.65.948.837c-.521 1.058-1.51 3.84.372 6.951c-1.324.13-2.65.317-3.688.986a7.182 7.182 0 0 0-1.878 1.791c-.629-.108-2.932-.675-3.334-3.231c.25-.194.452-.45.577-.766a.5.5 0 1 0-.93-.368a.772.772 0 0 1-.454.461a.777.777 0 0 1-.643-.07a.5.5 0 0 0-.486.874c.284.158.588.238.89.238c.037 0 .072-.017.109-.019c.476 2.413 2.383 3.473 3.732 3.794a3.69 3.69 0 0 0-.331 1.192a.5.5 0 0 0 .454.542l.045.002a.5.5 0 0 0 .498-.456c.108-1.213 1.265-2.48 2.293-3.145c.964-.621 2.375-.752 3.741-.879c1.325-.121 2.577-.237 3.558-.767zm12.866-1.504a.5.5 0 0 0 .878.48c.019-.034 1.842-3.449-1.571-5.744a.5.5 0 0 0-.558.83c2.644 1.778 1.309 4.326 1.251 4.434zM9.876 9.07a.497.497 0 0 0 .406-.208c1.45-2.017 3.458-1.327 3.543-1.295a.5.5 0 0 0 .345-.938c-.96-.356-3.177-.468-4.7 1.65a.5.5 0 0 0 .406.791zm13.072-1.888c2.225-.181 3.237 1.432 3.283 1.508a.5.5 0 0 0 .863-.507c-.054-.091-1.34-2.218-4.224-1.998a.5.5 0 0 0 .078.997zm9.15 14.611c-.246-.014-.517.181-.539.457c-.002.018-.161 1.719-1.91 2.294a.499.499 0 0 0 .157.975a.499.499 0 0 0 .156-.025c2.372-.778 2.586-3.064 2.594-3.161a.502.502 0 0 0-.458-.54z" />
-            <path d="M7.347 16.934a.5.5 0 1 0 .965.26a1.423 1.423 0 0 1 1.652-1.014a.5.5 0 0 0 .205-.979a2.354 2.354 0 0 0-1.248.086c-1.166-1.994-.939-3.96-.936-3.981a.502.502 0 0 0-.429-.562a.503.503 0 0 0-.562.427c-.013.097-.28 2.316 1.063 4.614a2.376 2.376 0 0 0-.71 1.149zm11.179-2.47a1.069 1.069 0 0 1 1.455.015a.502.502 0 0 0 .707-.011a.5.5 0 0 0-.01-.707a2.004 2.004 0 0 0-.797-.465c.296-1.016.179-1.467-.096-2.312a20.6 20.6 0 0 1-.157-.498l-.03-.1c-.364-1.208-.605-2.005.087-3.13a.5.5 0 0 0-.852-.524c-.928 1.508-.587 2.637-.192 3.944l.03.1c.059.194.113.364.163.517c.247.761.322 1.016.02 1.936a2.022 2.022 0 0 0-1.01.504a.5.5 0 0 0 .682.731zm6.365-2.985a2 2 0 0 0 .859-.191a.5.5 0 0 0-.426-.905a1.072 1.072 0 0 1-1.384-.457a.5.5 0 1 0-.881.472c.18.336.448.601.76.785c-.537 1.305-.232 2.691.017 3.426a.5.5 0 1 0 .947-.319c-.168-.498-.494-1.756-.002-2.826c.038.002.073.015.11.015zm4.797 9.429a.497.497 0 0 0-.531-.467a1.825 1.825 0 0 1-1.947-1.703a.509.509 0 0 0-.533-.465a.502.502 0 0 0-.465.533c.041.59.266 1.122.608 1.555c-.804.946-1.857 1.215-2.444 1.284c-.519.062-.973.009-1.498-.053c-.481-.055-1.025-.118-1.698-.098l-.005.001c-.02-.286-.088-.703-.305-1.05a.501.501 0 0 0-.847.531c.134.215.159.558.159.725c-.504.181-.94.447-1.334.704c-.704.458-1.259.82-2.094.632c-.756-.173-1.513-.208-2.155-.118c-.1-.251-.258-.551-.502-.782a.5.5 0 0 0-.687.727c.086.081.154.199.209.317c-1.103.454-1.656 1.213-1.682 1.25a.499.499 0 0 0 .407.788a.502.502 0 0 0 .406-.205c.005-.008.554-.743 1.637-1.04c.56-.154 1.363-.141 2.146.037c.219.05.422.067.619.07c.093.218.129.477.134.573a.501.501 0 0 0 .499.472l.027-.001a.5.5 0 0 0 .473-.523a3.023 3.023 0 0 0-.13-.686c.461-.167.862-.428 1.239-.673c.572-.373 1.113-.726 1.82-.749c.592-.021 1.08.036 1.551.091c.474.055.94.091 1.454.061c.091.253.084.591.07.704a.503.503 0 0 0 .497.563a.5.5 0 0 0 .495-.435a2.883 2.883 0 0 0-.059-.981a4.67 4.67 0 0 0 2.345-1.471a2.807 2.807 0 0 0 1.656.413a.499.499 0 0 0 .465-.531z" />
-          </g>
+        <svg width={size} height={size} viewBox="0 0 100 100">
+           <circle cx="50" cy="50" r="40" fill={BP.pink} opacity="0.2" />
+           <text x="50" y="62" fontSize="50" textAnchor="middle">🧠</text>
         </svg>
       );
     }
 
-    function BrainShield({ intensities, immunity, isGlowing, germLevel = 0 }) {
-      const BRAIN = 100, SLEEP_R = BRAIN, RING_START = SLEEP_R + 10, GAP = 10;
-      const germOpacity = [0, 0.18, 0.42, 0.72][germLevel];
-      const germCount = [0, 10, 18, 28][germLevel];
-      const bounceAmp = [0, 8, 22, 48][germLevel];
-      const bounceSpeed = [0, 5, 3.5, 2][germLevel];
-      const sparkCountBase = [0, 2, 5, 9][germLevel];
-
-      const [sparks, setSparks] = useState([]);
-      const sparkId = useRef(0);
-
-      useEffect(() => {
-        const iv = setInterval(() => {
-          if (germLevel === 0) return;
-          const count = sparkCountBase + Math.floor(Math.random() * 2);
-          const base = Math.random() * 2 * Math.PI;
-          setSparks(Array.from({ length: count }, (_, i) => ({
-            id: sparkId.current++,
-            angle: base + (i - count / 2) * 0.35 + (Math.random() - 0.5) * 0.2,
-            size: 2 + Math.random() * 2,
-            travel: 20 + Math.random() * 20,
-            dur: 700 + Math.random() * 300,
-            color: "#FFD700",
-          })));
-          setTimeout(() => setSparks([]), 1100);
-        }, 2200);
-        return () => clearInterval(iv);
-      }, [germLevel]);
-
-      const seeds = useRef([...Array(28)].map((_, i) => {
-        const isRight = i % 2 === 0;
-        const spread = (Math.random() - 0.5) * 2.4;
-        return {
-          angle: isRight ? spread : Math.PI + spread,
-          bandFrac: Math.random(),
-          size: Math.random() * 16 + 11,
-          speedMult: 0.7 + Math.random() * 0.6,
-          rotation: Math.random() * 360,
-        };
-      })).current;
-
-      const ringDurs = useRef(ACTIVITIES.map((_, i) => 8 + i * 0.7 + Math.random() * 2)).current;
-      const rings = ACTIVITIES.map((a, i) => ({ idx: intensities[a.id] ?? null, color: RING_COLORS[i % RING_COLORS.length], i, isFirstTime: !!a.isFirstTime })).filter((r) => r.idx !== null);
+    function BrainShield({ intensities, immunity, germLevel = 0 }) {
+      const BRAIN = 100, SLEEP_R = 50, RING_START = 65, GAP = 12;
+      const rings = ACTIVITIES.map((a, i) => ({ 
+        idx: intensities[a.id] ?? null, 
+        color: RING_COLORS[i % RING_COLORS.length], 
+        i 
+      })).filter((r) => r.idx !== null);
+      
       const maxR = rings.length > 0 ? RING_START + (rings.length - 1) * GAP : RING_START;
-      const W = (maxR + 4) * 2, H = (maxR + 4) * 2, cx = W / 2, cy = H / 2;
-      const s = getStr(immunity);
-      const sleepThick = 1 + immunity / 100;
-      const bandInner = SLEEP_R + 6, bandOuter = maxR + 44;
-
-      const germKeyframes = seeds.slice(0, germCount).map((seed, i) => {
-        const dx = Math.cos(seed.angle) * bounceAmp, dy = Math.sin(seed.angle) * bounceAmp, r = seed.rotation;
-        return `@keyframes gb${i} { 0% { transform: translate(0,0) rotate(${r}deg) scale(1); } 60% { transform: translate(${dx}px, ${dy}px) rotate(${r}deg) scale(${1 + germLevel * 0.08}); } 100% { transform: translate(0,0) rotate(${r}deg) scale(1); } }`;
-      }).join("");
-
+      const W = (maxR + 25) * 2, H = (maxR + 25) * 2, cx = W / 2, cy = H / 2;
+      
       return (
         <div style={{ position: "relative", width: W, height: H, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <svg width={W} height={H} style={{ position: "absolute", inset: 0, overflow: "visible" }}>
-            <style>{germKeyframes}</style>
-            {germCount > 0 && seeds.slice(0, germCount).map((seed, i) => {
-              const radialDist = bandInner + seed.bandFrac * (bandOuter - bandInner);
-              const gx = cx + Math.cos(seed.angle) * radialDist, gy = cy + Math.sin(seed.angle) * radialDist;
-              const dur = bounceSpeed * seed.speedMult;
-              return <text key={i} x={gx} y={gy} fontSize={seed.size} textAnchor="middle" dominantBaseline="middle" opacity={germOpacity} style={{ userSelect: "none", animation: `gb${i} ${dur}s ease-in-out infinite`, transformOrigin: `${gx}px ${gy}px` }}>🦠</text>;
-            })}
-            <circle cx={cx} cy={cy} r={SLEEP_R} fill="none" stroke={s.color} strokeWidth={sleepThick} strokeDasharray="6 5" opacity={0.55 + (immunity / 100) * 0.4} />
+            <circle cx={cx} cy={cy} r={SLEEP_R} fill="none" stroke="#FFF" strokeWidth="2" strokeDasharray="5 5" opacity="0.3" />
             {rings.map((ring, ri) => {
-              const r = RING_START + ri * GAP, arc = 2 * Math.PI * r, fill = 0.23 + ((ring.idx + 1) / INTENSITY_STEPS) * 0.47;
-              return <circle key={ri} cx={cx} cy={cy} r={r} fill="none" stroke={ring.color} strokeWidth={ring.isFirstTime ? 1.5 : 7} strokeDasharray={`${arc * fill} ${arc * (1 - fill)}`} strokeLinecap="round" style={{ animation: `${ri % 2 === 0 ? 'spinCW' : 'spinCCW'} ${ringDurs[ring.i]}s linear infinite`, transformOrigin: `${cx}px ${cy}px` }} />;
+              const r = RING_START + ri * GAP;
+              const arc = 2 * Math.PI * r;
+              const fill = 0.23 + ((ring.idx + 1) / INTENSITY_STEPS) * 0.47;
+              return (
+                <circle 
+                  key={ri} cx={cx} cy={cy} r={r} fill="none" stroke={ring.color} strokeWidth="8" 
+                  strokeDasharray={`${arc * fill} ${arc * (1 - fill)}`} strokeLinecap="round" 
+                  style={{ animation: `${ri % 2 === 0 ? 'spinCW' : 'spinCCW'} 10s linear infinite`, transformOrigin: `${cx}px ${cy}px` }} 
+                />
+              );
             })}
           </svg>
           <div style={{ animation: "brainFloat 3.5s ease-in-out infinite" }}><BrainSVG size={BRAIN} /></div>
@@ -188,19 +114,17 @@
       );
     }
 
-    // --- Sub-components (Slider, Chip, etc) ---
-    function Slider({ steps, value, onChange, fill, dir = "up" }) {
+    function Slider({ steps, value, onChange, fill }) {
       const ref = useRef(null);
-      const step = (cx) => {
-        const rect = ref.current?.getBoundingClientRect();
-        const r = Math.max(0, Math.min(1, (cx - rect.left) / rect.width));
-        return dir === "up" ? Math.round(r * steps) : steps - Math.round(r * steps);
+      const update = (clientX) => {
+        const rect = ref.current.getBoundingClientRect();
+        const r = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        onChange(Math.round(r * steps));
       };
-      const tPct = dir === "up" ? (value / steps) * 100 : ((steps - value) / steps) * 100;
       return (
-        <div ref={ref} onPointerDown={(e) => { ref.current.setPointerCapture(e.pointerId); onChange(step(e.clientX)); }} onPointerMove={(e) => { if(e.buttons) onChange(step(e.clientX)); }} style={{ position: "relative", height: 32, display: "flex", alignItems: "center", cursor: "ew-resize", touchAction: "none" }}>
-          <div style={{ position: "absolute", left: 0, right: 0, height: 9, background: "rgba(255,255,255,0.05)", borderRadius: 10 }} />
-          <div style={{ position: "absolute", left: dir === "up" ? 0 : `${tPct}%`, width: dir === "up" ? `${tPct}%` : `${100 - tPct}%`, height: 9, background: fill, borderRadius: 10, transition: "width .2s ease" }} />
+        <div ref={ref} onPointerDown={(e) => { e.target.setPointerCapture(e.pointerId); update(e.clientX); }} onPointerMove={(e) => { if(e.buttons) update(e.clientX); }} style={{ position: "relative", height: 40, display: "flex", alignItems: "center", touchAction: "none" }}>
+          <div style={{ position: "absolute", width: "100%", height: 10, background: "rgba(255,255,255,0.1)", borderRadius: 10 }} />
+          <div style={{ position: "absolute", width: `${(value/steps)*100}%`, height: 10, background: fill, borderRadius: 10 }} />
         </div>
       );
     }
@@ -208,60 +132,31 @@
     function ActivityChip({ activity, aIdx, intensityIdx, onSet, onClear, expanded, onToggle }) {
       const active = intensityIdx !== null, rc = RING_COLORS[aIdx % RING_COLORS.length];
       return (
-        <div style={{ borderRadius: 14, background: expanded ? BP.sliderBg : BP.basecolour, marginBottom: 8, cursor: "pointer" }} onClick={onToggle}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px" }}>
-            <span style={{ fontSize: "1.2rem" }}>{activity.emoji}</span>
-            <span style={{ fontFamily: FONTS.body, fontWeight: 600, color: expanded ? BP.sliderFg : BP.textMed, flex: 1 }}>{activity.label}</span>
-            {expanded && <button onClick={onToggle} style={{ background: BP.roundbuttons, color: BP.white, border: "none", borderRadius: "50%", width: 28, height: 28 }}>✓</button>}
+        <div style={{ borderRadius: 16, background: expanded ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.05)", marginBottom: 10, padding: "12px 16px" }} onClick={onToggle}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: "1.5rem" }}>{activity.emoji}</span>
+            <span style={{ fontFamily: FONTS.body, color: "#FFF", flex: 1, fontWeight: 600 }}>{activity.label}</span>
+            {expanded && <button onClick={(e) => { e.stopPropagation(); onClear(); }} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFF', borderRadius: 10, padding: '4px 8px', fontSize: '0.7rem' }}>Clear</button>}
           </div>
-          {expanded && <div style={{ padding: "0 14px 14px" }} onClick={e => e.stopPropagation()}><Slider steps={INTENSITY_STEPS} value={active ? intensityIdx + 1 : 0} onChange={v => v === 0 ? onClear() : onSet(v - 1)} fill={rc} /></div>}
+          {expanded && <div onClick={e => e.stopPropagation()} style={{ marginTop: 12 }}><Slider steps={INTENSITY_STEPS} value={active ? intensityIdx + 1 : 0} onChange={v => v === 0 ? onClear() : onSet(v - 1)} fill={rc} /></div>}
         </div>
       );
     }
 
-    function Schedule({ tvToday }) {
-      return (
-        <div style={{ marginTop: 40, padding: "20px", background: BP.basecolour, borderRadius: 24, display: "flex", alignItems: "center", gap: 15 }}>
-          <div style={{ fontSize: "2.4rem" }}>{tvToday === "yes" ? "🏆" : "⚡"}</div>
-          <div>
-            <div style={{ fontFamily: FONTS.body, fontWeight: 700, color: BP.text }}>Now: Is it TV time?</div>
-            <div style={{ color: BP.pink, fontWeight: 600 }}>{tvToday === "yes" ? "TV Time!" : "No, brain is still zapping TV germs"}</div>
-          </div>
-        </div>
-      );
-    }
-
-    // --- Main Application ---
     function BrainBank() {
       const [immunity, setImmunity] = useState(SLEEP_BASE);
       const [tab, setTab] = useState("immunity");
-      const [secretMode, setSecretMode] = useState(false);
-      const [secretTaps, setSecretTaps] = useState(0);
       const [intensities, setIntensities] = useState({});
       const [tvToday, setTvToday] = useState("no");
       const [germLevel, setGermLevel] = useState(1);
       const [expanded, setExpanded] = useState(null);
 
       useEffect(() => {
-        const s = load("bb-v15");
-        if (s) {
-          if (s.immunity) setImmunity(s.immunity);
-          if (s.intensities) setIntensities(s.intensities);
-          if (s.tvToday) setTvToday(s.tvToday);
-          if (s.germLevel !== undefined) setGermLevel(s.germLevel);
-        }
+        const s = load("zap-zap-final");
+        if (s) { setImmunity(s.immunity); setIntensities(s.intensities); setTvToday(s.tvToday); setGermLevel(s.germLevel); }
       }, []);
 
-      useEffect(() => {
-        save("bb-v15", { immunity, intensities, tvToday, germLevel });
-      }, [immunity, intensities, tvToday, germLevel]);
-
-      const handleAdminTap = () => {
-        const n = secretTaps + 1;
-        setSecretTaps(n);
-        if (n >= 5) { setSecretMode(!secretMode); setTab(secretMode ? "immunity" : "parent"); setSecretTaps(0); }
-        else setTimeout(() => setSecretTaps(0), 1500);
-      };
+      useEffect(() => { save("zap-zap-final", { immunity, intensities, tvToday, germLevel }); }, [immunity, intensities, tvToday, germLevel]);
 
       const setInt = (a, idx) => {
         const prev = intensities[a.id] ?? null;
@@ -271,32 +166,69 @@
       };
 
       return (
-        <div style={{ maxWidth: 420, margin: "0 auto", padding: "20px" }}>
-          <style>{`
-            @import url('${FONTS.importUrl}');
-            .elsie{font-family:${FONTS.title}!important;font-weight:900;}
-            @keyframes spinCW{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-            @keyframes spinCCW{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
-            @keyframes brainFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-          `}</style>
-          
-          <div style={{ textAlign: "center", marginBottom: 20 }}>
-            <div className="elsie" style={{ fontSize: "2.4rem", color: BP.text }}>Zap Zap</div>
-            {secretMode && <div style={{ background: BP.pink, borderRadius: 20, padding: "2px 10px", fontSize: "0.6rem", display: "inline-block" }}>Admin Active</div>}
+        <div style={{ maxWidth: 420, margin: "0 auto", padding: "20px", paddingBottom: 100 }}>
+          <div style={{ textAlign: 'center', marginBottom: 25 }}>
+            <div style={{ fontFamily: FONTS.title, fontSize: '2.8rem', color: '#FFF' }}>Zap Zap</div>
           </div>
-
-          <div style={{ display: "flex", justifyContent: "center", gap: 20, marginBottom: 20 }}>
-            {KIDS.map(k => <div key={k.id} style={{ textAlign: "center" }}>
-              <div style={{ width: 50, height: 50, borderRadius: "50%", background: k.color, fontSize: "1.5rem", display: "flex", alignItems: "center", justifyContent: "center" }}>{k.emoji}</div>
-              <div style={{ fontSize: "0.6rem", color: BP.textLight }}>{k.name}</div>
-            </div>)}
+          
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 15, marginBottom: 20 }}>
+            {KIDS.map(k => <div key={k.id} style={{ width: 50, height: 50, borderRadius: '25%', background: k.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>{k.emoji}</div>)}
           </div>
 
           {tab === "immunity" && (
             <div>
               <BrainShield intensities={intensities} immunity={immunity} germLevel={germLevel} />
-              {ACTIVITIES.map((a, i) => <ActivityChip key={a.id} activity={a} aIdx={i} intensityIdx={intensities[a.id] ?? null} expanded={expanded === a.id} onToggle={() => setExpanded(expanded === a.id ? null : a.id)} onSet={idx => setInt(a, idx)} onClear={() => { const prev = intensities[a.id]; setImmunity(p => Math.max(0, p - Math.round(a.power * intensityMult(prev)))); setIntensities(p => { const n = {...p}; delete n[a.id]; return n; }); setExpanded(null); }} />)}
+              <div style={{ textAlign: 'center', color: '#FFF', opacity: 0.6, fontSize: '0.9rem', marginBottom: 20, fontWeight: 700 }}>
+                 Immunity: {immunity}%
+              </div>
+              {ACTIVITIES.map((a, i) => (
+                <ActivityChip 
+                  key={a.id} activity={a} aIdx={i} intensityIdx={intensities[a.id] ?? null} 
+                  expanded={expanded === a.id} onToggle={() => setExpanded(expanded === a.id ? null : a.id)} 
+                  onSet={idx => setInt(a, idx)} onClear={() => {
+                    const prev = intensities[a.id];
+                    if (prev !== null) setImmunity(p => Math.max(0, p - Math.round(a.power * intensityMult(prev))));
+                    setIntensities(p => { const n = {...p}; delete n[a.id]; return n; });
+                  }} 
+                />
+              ))}
             </div>
           )}
 
-          {tab === "schedule" && <Schedule tv
+          {tab === "schedule" && (
+            <div style={{ padding: 30, background: 'rgba(255,255,255,0.05)', borderRadius: 24, textAlign: 'center' }}>
+               <div style={{ fontSize: '3rem', marginBottom: 15 }}>{tvToday === "yes" ? "🏆" : "🦠"}</div>
+               <div style={{ fontSize: '1.4rem', color: '#FFF', fontWeight: 700 }}>{tvToday === "yes" ? "TV TIME!" : "NO TV YET"}</div>
+               <p style={{ color: '#FFF', opacity: 0.6, marginTop: 10 }}>Keep zapping germs to win!</p>
+            </div>
+          )}
+
+          {tab === "parent" && (
+            <div style={{ color: '#FFF' }}>
+              <div style={{ marginBottom: 20 }}>
+                <p>Today's Reward:</p>
+                <button onClick={() => setTvToday(tvToday === "yes" ? "no" : "yes")} style={{ width: '100%', padding: 15, background: tvToday === "yes" ? BP.pink : '#333', color: '#FFF', border: 'none', borderRadius: 12 }}>
+                  Toggle TV Reward: {tvToday.toUpperCase()}
+                </button>
+              </div>
+              <p>Germ Visuals:</p>
+              <div style={{ display: 'flex', gap: 10 }}>
+                {[0,1,2,3].map(l => <button key={l} onClick={() => setGermLevel(l)} style={{ flex: 1, padding: 12, background: germLevel === l ? BP.pink : '#333', color: '#FFF', border: 'none', borderRadius: 10 }}>Level {l}</button>)}
+              </div>
+            </div>
+          )}
+
+          <div style={{ position: 'fixed', bottom: 20, left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: 380, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)', display: 'flex', padding: 8, borderRadius: 20, gap: 5 }}>
+            <button onClick={() => setTab("immunity")} style={{ flex: 1, padding: '12px', background: tab === "immunity" ? BP.pink : "none", color: "#FFF", border: "none", borderRadius: 15 }}>🛡️</button>
+            <button onClick={() => setTab("schedule")} style={{ flex: 1, padding: '12px', background: tab === "schedule" ? BP.pink : "none", color: "#FFF", border: "none", borderRadius: 15 }}>📺</button>
+            <button onClick={() => setTab("parent")} style={{ flex: 1, padding: '12px', background: tab === "parent" ? BP.pink : "none", color: "#FFF", border: "none", borderRadius: 15 }}>⚙️</button>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<BrainBank />);
+  </script>
+</body>
+</html>
