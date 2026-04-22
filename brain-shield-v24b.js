@@ -1649,3 +1649,8 @@ export default function BrainBank() {
     </div>
   );
 }
+
+// Add this at the very bottom of brain-shield-v24b.js
+const rootElement = document.getElementById("root");
+const root = ReactDOM.createRoot(rootElement);
+root.render(<BrainShield />);
