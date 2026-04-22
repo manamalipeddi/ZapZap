@@ -751,7 +751,7 @@ function Schedule({ tvToday, tvTomorrow }) {
 
 
  const todayStatusText =
-   tvToday === "yes" ? "TV Time" : "No, brain is still zapping TV germs";
+   tvToday === "yes" ? "TV Time" : "Not TV time, brain is still zapping TV germs";
  const todayStatusColor = tvToday === "yes" ? BP.pink : BP.pink;
  const todayEmoji = tvToday === "yes" ? "🏆" : "⚡";
 
@@ -781,7 +781,7 @@ function Schedule({ tvToday, tvTomorrow }) {
                color: BP.text,
              }}
            >
-             Today: Is it TV time?
+             Today
            </div>
            <div
              style={{
