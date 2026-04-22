@@ -223,6 +223,7 @@ function BrainShield({ intensities, immunity, isGlowing, germLevel = 0 }) {
          id: sparkId.current++,
          angle: base + (i - count / 2) * 0.35 + (Math.random() - 0.5) * 0.2,
          size: 2 + Math.random() * 2,
+         length: 5 + Math.random() * 15, // Random length for the zap
          travel: 20 + Math.random() * 20,
          dur: 700 + Math.random() * 300,
          color: "#FFD700",
@@ -461,42 +462,28 @@ function BrainShield({ intensities, immunity, isGlowing, germLevel = 0 }) {
            <g key={spark.id}>
              <style>{`
                @keyframes ${animName} {
-                 0%   { transform: translate(0,0); opacity: 0.9; r: ${
-                   spark.size
-                 }; }
+                 0%   { transform: translate(0,0); opacity: 0.9; r: ${spark.size}; }
                  70%  { transform: translate(${tx}px,${ty}px); opacity: 0.6; }
-                 100% { transform: translate(${tx * 1.15}px,${
-               ty * 1.15
-             }px); opacity: 0; }
+                 100% { transform: translate(${tx * 1.15}px,${ty * 1.15}px); opacity: 0; }
                }
              `}</style>
-             <circle
-               cx={ox}
-               cy={oy}
-               r={spark.size}
-               fill={spark.color}
-               style={{
-                 animation: `${animName} ${spark.dur}ms ease-out forwards`,
-                 transformOrigin: `${ox}px ${oy}px`,
-                 filter: `drop-shadow(0 0 3px ${spark.color})`,
-               }}
-             />
-           </g>
-         );
-       })}
-     </svg>
-     <div
-       style={{
-         position: "relative",
-         zIndex: 2,
-         animation: "brainFloat 3.5s ease-in-out infinite",
-       }}
-     >
-       <BrainSVG size={BRAIN} />
-     </div>
-   </div>
- );
-}
+            <line
+        x1={ox}
+        y1={oy}
+        x2={x2}
+        y2={y2}
+        stroke={spark.color}
+        strokeWidth={spark.size} // Thickness
+        strokeLinecap="round" // Makes the zap ends look polished
+        style={{
+          animation: `${animName} ${spark.dur}ms ease-out forwards`,
+          transformOrigin: `${ox}px ${oy}px`,
+          filter: `drop-shadow(0 0 3px ${spark.color})`,
+        }}
+      />
+    </g>
+  );
+})}
 
 
 function StrengthLabel({ immunity }) {
