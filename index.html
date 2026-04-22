@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Zap Zap</title>
-
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#290b47">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -16,19 +14,14 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
-    body, html {
-      margin: 0; padding: 0;
-      width: 100%; height: 100%;
-      background-color: #290b47; 
-      overflow: hidden;
-      font-family: -apple-system, sans-serif;
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Henny+Penny&family=Montserrat:wght@600&display=swap');
+    body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #290b47; overflow: hidden; font-family: 'Montserrat', sans-serif; }
     #root { height: 100%; width: 100%; }
-    * { -webkit-tap-highlight-color: transparent; outline: none; box-sizing: border-box; }
-    
+    .title-font { font-family: 'Henny Penny', cursive; }
     @keyframes spinCW { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @keyframes spinCCW { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
-    @keyframes brainFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    @keyframes brainFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    * { -webkit-tap-highlight-color: transparent; outline: none; box-sizing: border-box; }
   </style>
 </head>
 <body>
@@ -37,22 +30,8 @@
   <script type="text/babel" data-presets="react">
     const { useState, useEffect, useRef } = React;
 
-    const BP = {
-      pink: "#e60c78", white: "#FFFF11", cyan: "#00F0FF",
-      basecolour: "#290b47", text: "#FFFFFF", textLight: "#FFFFFF",
-    };
-
-    const FONTS = {
-      importUrl: "https://fonts.googleapis.com/css2?family=Henny+Penny&family=Montserrat:wght@600&display=swap",
-      title: "'Henny Penny', cursive",
-      body: "'Montserrat', sans-serif",
-    };
-
+    const BP = { pink: "#e60c78", white: "#FFFF11", cyan: "#00F0FF", base: "#290b47", text: "#FFFFFF" };
     const RING_COLORS = ["#F5C7F2", "#00FFC5", "#FFFD77", "#85C7F2", "#FF5F59", "#B2B09B", "#E3B5A4", "#FFB300"];
-    const INTENSITY_STEPS = 9;
-    const intensityMult = (idx) => 0.1 + (idx / (INTENSITY_STEPS - 1)) * 0.9;
-    const SLEEP_BASE = 10;
-
     const ACTIVITIES = [
       { id: "outside", label: "Outside Time", emoji: "⚽", power: 30 },
       { id: "veggies", label: "Eating Veggies", emoji: "🥦", power: 10 },
@@ -60,175 +39,137 @@
       { id: "writing", label: "Writing", emoji: "✏️", power: 15 },
       { id: "creating", label: "Creating", emoji: "🪄", power: 15 },
       { id: "puzzles", label: "Puzzles", emoji: "♟️", power: 15 },
-      { id: "firsttime", label: "First Time!", emoji: "🌟", power: 8, isFirstTime: true },
+      { id: "firsttime", label: "First Time!", emoji: "🌟", power: 8, isFirstTime: true }
     ];
 
     const KIDS = [
       { id: "lara", name: "Lara", emoji: "👧🏻", color: "#e60c78" },
       { id: "ari", name: "Ari", emoji: "👦🏻", color: "#ff6c06" },
-      { id: "astrid", name: "Astrid", emoji: "👶🏻", color: "#f42a53" },
+      { id: "astrid", name: "Astrid", emoji: "👶🏻", color: "#f42a53" }
     ];
-
-    const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
-    const load = (k) => { const val = localStorage.getItem(k); return val ? JSON.parse(val) : null; };
 
     function BrainSVG({ size = 100 }) {
       return (
-        <svg width={size} height={size} viewBox="0 0 100 100">
-           <circle cx="50" cy="50" r="40" fill={BP.pink} opacity="0.2" />
-           <text x="50" y="62" fontSize="50" textAnchor="middle">🧠</text>
+        <svg width={size} height={size} viewBox="0 0 36 36" style={{ filter: 'drop-shadow(0 0 10px rgba(0,240,255,0.3))' }}>
+          <path fill="#F4ABBA" d="M29.75 27.625s2.184-.443 3.542-2.229c1.583-2.083 1.375-4.312 1.375-4.312c1.604-3-.5-5.813-.5-5.813C33.958 12.104 32 10.792 32 10.792c-1.271-3.021-4.083-3.833-4.083-3.833c-2.208-2.583-6.125-2.5-6.125-2.5s-3.67-1.345-8.708.167c-.833.25-3.625.833-5.667 2.083C.981 10.649.494 16.793.584 17.792C1.083 23.375 5 24.375 7.5 24.958c.583 1.583 2.729 4.5 6.583 3.417c4.75-.833 6.75-2.25 7.917-2.25s4.417 1.25 7.75 1.5z" />
+          <path fill="#EA596E" d="M17.737 18.648c2.328-1.255 3.59-1.138 4.704-1.037c.354.032.689.057 1.028.055c1.984-.045 3.591-.881 4.302-1.69a.501.501 0 0 0-.752-.661c-.548.624-1.899 1.313-3.573 1.351c-.3.009-.601-.021-.913-.05c-1.195-.111-2.679-.247-5.271 1.152c-.665.359-1.577.492-2.565.592c-2.197-3.171-.875-5.933-.497-6.591" />
         </svg>
       );
     }
 
-    function BrainShield({ intensities, immunity, germLevel = 0 }) {
-      const BRAIN = 100, SLEEP_R = 50, RING_START = 65, GAP = 12;
-      const rings = ACTIVITIES.map((a, i) => ({ 
-        idx: intensities[a.id] ?? null, 
-        color: RING_COLORS[i % RING_COLORS.length], 
-        i 
-      })).filter((r) => r.idx !== null);
-      
+    function BrainShield({ intensities, immunity, germLevel }) {
+      const RING_START = 65, GAP = 12;
+      const rings = ACTIVITIES.map((a, i) => ({ idx: intensities[a.id] ?? null, color: RING_COLORS[i % RING_COLORS.length], i, isFirstTime: a.isFirstTime })).filter(r => r.idx !== null);
       const maxR = rings.length > 0 ? RING_START + (rings.length - 1) * GAP : RING_START;
-      const W = (maxR + 25) * 2, H = (maxR + 25) * 2, cx = W / 2, cy = H / 2;
-      
+      const W = (maxR + 30) * 2, cx = W / 2;
       return (
-        <div style={{ position: "relative", width: W, height: H, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <svg width={W} height={H} style={{ position: "absolute", inset: 0, overflow: "visible" }}>
-            <circle cx={cx} cy={cy} r={SLEEP_R} fill="none" stroke="#FFF" strokeWidth="2" strokeDasharray="5 5" opacity="0.3" />
+        <div style={{ position: "relative", width: W, height: W, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <svg width={W} height={W} style={{ position: "absolute", overflow: "visible" }}>
+            <circle cx={cx} cy={cx} r={50} fill="none" stroke="#FFF" strokeWidth="2" strokeDasharray="6 6" opacity="0.2" />
             {rings.map((ring, ri) => {
-              const r = RING_START + ri * GAP;
-              const arc = 2 * Math.PI * r;
-              const fill = 0.23 + ((ring.idx + 1) / INTENSITY_STEPS) * 0.47;
-              return (
-                <circle 
-                  key={ri} cx={cx} cy={cy} r={r} fill="none" stroke={ring.color} strokeWidth="8" 
-                  strokeDasharray={`${arc * fill} ${arc * (1 - fill)}`} strokeLinecap="round" 
-                  style={{ animation: `${ri % 2 === 0 ? 'spinCW' : 'spinCCW'} 10s linear infinite`, transformOrigin: `${cx}px ${cy}px` }} 
-                />
-              );
+              const r = RING_START + ri * GAP, arc = 2 * Math.PI * r, fill = 0.25 + ((ring.idx + 1) / 9) * 0.45;
+              return <circle key={ri} cx={cx} cy={cx} r={r} fill="none" stroke={ring.color} strokeWidth={ring.isFirstTime ? 2 : 8} strokeDasharray={`${arc * fill} ${arc * (1 - fill)}`} strokeLinecap="round" style={{ animation: `${ri % 2 === 0 ? 'spinCW' : 'spinCCW'} 12s linear infinite`, transformOrigin: 'center' }} />;
             })}
           </svg>
-          <div style={{ animation: "brainFloat 3.5s ease-in-out infinite" }}><BrainSVG size={BRAIN} /></div>
+          <div style={{ animation: "brainFloat 4s ease-in-out infinite" }}><BrainSVG size={110} /></div>
         </div>
       );
     }
 
-    function Slider({ steps, value, onChange, fill }) {
-      const ref = useRef(null);
-      const update = (clientX) => {
-        const rect = ref.current.getBoundingClientRect();
-        const r = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-        onChange(Math.round(r * steps));
-      };
-      return (
-        <div ref={ref} onPointerDown={(e) => { e.target.setPointerCapture(e.pointerId); update(e.clientX); }} onPointerMove={(e) => { if(e.buttons) update(e.clientX); }} style={{ position: "relative", height: 40, display: "flex", alignItems: "center", touchAction: "none" }}>
-          <div style={{ position: "absolute", width: "100%", height: 10, background: "rgba(255,255,255,0.1)", borderRadius: 10 }} />
-          <div style={{ position: "absolute", width: `${(value/steps)*100}%`, height: 10, background: fill, borderRadius: 10 }} />
-        </div>
-      );
-    }
-
-    function ActivityChip({ activity, aIdx, intensityIdx, onSet, onClear, expanded, onToggle }) {
-      const active = intensityIdx !== null, rc = RING_COLORS[aIdx % RING_COLORS.length];
-      return (
-        <div style={{ borderRadius: 16, background: expanded ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.05)", marginBottom: 10, padding: "12px 16px" }} onClick={onToggle}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: "1.5rem" }}>{activity.emoji}</span>
-            <span style={{ fontFamily: FONTS.body, color: "#FFF", flex: 1, fontWeight: 600 }}>{activity.label}</span>
-            {expanded && <button onClick={(e) => { e.stopPropagation(); onClear(); }} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFF', borderRadius: 10, padding: '4px 8px', fontSize: '0.7rem' }}>Clear</button>}
-          </div>
-          {expanded && <div onClick={e => e.stopPropagation()} style={{ marginTop: 12 }}><Slider steps={INTENSITY_STEPS} value={active ? intensityIdx + 1 : 0} onChange={v => v === 0 ? onClear() : onSet(v - 1)} fill={rc} /></div>}
-        </div>
-      );
-    }
-
-    function BrainBank() {
-      const [immunity, setImmunity] = useState(SLEEP_BASE);
-      const [tab, setTab] = useState("immunity");
+    function App() {
+      const [immunity, setImmunity] = useState(10);
       const [intensities, setIntensities] = useState({});
-      const [tvToday, setTvToday] = useState("no");
+      const [tab, setTab] = useState("immunity");
       const [germLevel, setGermLevel] = useState(1);
+      const [tvToday, setTvToday] = useState("no");
       const [expanded, setExpanded] = useState(null);
+      const [admin, setAdmin] = useState(false);
 
       useEffect(() => {
-        const s = load("zap-zap-final");
-        if (s) { setImmunity(s.immunity); setIntensities(s.intensities); setTvToday(s.tvToday); setGermLevel(s.germLevel); }
+        const saved = localStorage.getItem("zap-zap-v24");
+        if (saved) {
+          const s = JSON.parse(saved);
+          setImmunity(s.immunity); setIntensities(s.intensities); setTvToday(s.tvToday); setGermLevel(s.germLevel);
+        }
       }, []);
 
-      useEffect(() => { save("zap-zap-final", { immunity, intensities, tvToday, germLevel }); }, [immunity, intensities, tvToday, germLevel]);
+      useEffect(() => {
+        localStorage.setItem("zap-zap-v24", JSON.stringify({ immunity, intensities, tvToday, germLevel }));
+      }, [immunity, intensities, tvToday, germLevel]);
 
-      const setInt = (a, idx) => {
+      const updateActivity = (a, val) => {
         const prev = intensities[a.id] ?? null;
-        const change = Math.round(a.power * intensityMult(idx)) - (prev !== null ? Math.round(a.power * intensityMult(prev)) : 0);
-        setImmunity(p => Math.min(100, Math.max(0, p + change)));
-        setIntensities(p => ({ ...p, [a.id]: idx }));
+        const prevPoints = prev !== null ? Math.round(a.power * (0.1 + (prev / 8) * 0.9)) : 0;
+        const newPoints = Math.round(a.power * (0.1 + (val / 8) * 0.9));
+        setImmunity(p => Math.min(100, Math.max(0, p - prevPoints + newPoints)));
+        setIntensities(p => ({ ...p, [a.id]: val }));
       };
 
       return (
-        <div style={{ maxWidth: 420, margin: "0 auto", padding: "20px", paddingBottom: 100 }}>
-          <div style={{ textAlign: 'center', marginBottom: 25 }}>
-            <div style={{ fontFamily: FONTS.title, fontSize: '2.8rem', color: '#FFF' }}>Zap Zap</div>
+        <div style={{ maxWidth: 420, margin: "0 auto", padding: "20px", color: "#FFF" }}>
+          <div style={{ textAlign: "center", marginBottom: 20 }} onClick={() => setAdmin(!admin)}>
+            <h1 className="title-font" style={{ fontSize: "2.8rem", margin: 0 }}>Zap Zap</h1>
+            {admin && <span style={{ fontSize: "0.7rem", background: BP.pink, padding: "2px 8px", borderRadius: 10 }}>Admin Mode</span>}
           </div>
-          
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 15, marginBottom: 20 }}>
-            {KIDS.map(k => <div key={k.id} style={{ width: 50, height: 50, borderRadius: '25%', background: k.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>{k.emoji}</div>)}
+
+          <div style={{ display: "flex", justifyContent: "center", gap: 20, marginBottom: 30 }}>
+            {KIDS.map(k => <div key={k.id} style={{ textAlign: "center" }}><div style={{ width: 52, height: 52, borderRadius: "30%", background: k.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.6rem", boxShadow: "0 4px 15px rgba(0,0,0,0.3)" }}>{k.emoji}</div></div>)}
           </div>
 
           {tab === "immunity" && (
-            <div>
+            <div style={{ animation: "fadeIn 0.5s ease" }}>
               <BrainShield intensities={intensities} immunity={immunity} germLevel={germLevel} />
-              <div style={{ textAlign: 'center', color: '#FFF', opacity: 0.6, fontSize: '0.9rem', marginBottom: 20, fontWeight: 700 }}>
-                 Immunity: {immunity}%
-              </div>
+              <div style={{ textAlign: "center", opacity: 0.6, fontSize: "0.9rem", margin: "20px 0" }}>Protection: {immunity}%</div>
               {ACTIVITIES.map((a, i) => (
-                <ActivityChip 
-                  key={a.id} activity={a} aIdx={i} intensityIdx={intensities[a.id] ?? null} 
-                  expanded={expanded === a.id} onToggle={() => setExpanded(expanded === a.id ? null : a.id)} 
-                  onSet={idx => setInt(a, idx)} onClear={() => {
-                    const prev = intensities[a.id];
-                    if (prev !== null) setImmunity(p => Math.max(0, p - Math.round(a.power * intensityMult(prev))));
-                    setIntensities(p => { const n = {...p}; delete n[a.id]; return n; });
-                  }} 
-                />
+                <div key={a.id} style={{ background: expanded === a.id ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.04)", borderRadius: 16, padding: "12px 16px", marginBottom: 10 }} onClick={() => setExpanded(expanded === a.id ? null : a.id)}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <span style={{ fontSize: "1.4rem" }}>{a.emoji}</span>
+                    <span style={{ flex: 1, fontWeight: 600 }}>{a.label}</span>
+                    {intensities[a.id] !== undefined && <div style={{ width: 10, height: 10, borderRadius: "50%", background: RING_COLORS[i % RING_COLORS.length] }} />}
+                  </div>
+                  {expanded === a.id && (
+                    <div style={{ marginTop: 15 }} onClick={e => e.stopPropagation()}>
+                      <input type="range" min="0" max="8" value={intensities[a.id] ?? 0} onChange={e => updateActivity(a, parseInt(e.target.value))} style={{ width: "100%", accentColor: RING_COLORS[i % RING_COLORS.length] }} />
+                      <button onClick={() => { 
+                        const prev = intensities[a.id];
+                        if (prev !== undefined) setImmunity(p => Math.max(0, p - Math.round(a.power * (0.1 + (prev / 8) * 0.9))));
+                        setIntensities(p => { const n = {...p}; delete n[a.id]; return n; });
+                      }} style={{ background: "none", border: "none", color: "#FF5F59", fontSize: "0.7rem", marginTop: 10, cursor: "pointer" }}>Clear Activity</button>
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           )}
 
           {tab === "schedule" && (
-            <div style={{ padding: 30, background: 'rgba(255,255,255,0.05)', borderRadius: 24, textAlign: 'center' }}>
-               <div style={{ fontSize: '3rem', marginBottom: 15 }}>{tvToday === "yes" ? "🏆" : "🦠"}</div>
-               <div style={{ fontSize: '1.4rem', color: '#FFF', fontWeight: 700 }}>{tvToday === "yes" ? "TV TIME!" : "NO TV YET"}</div>
-               <p style={{ color: '#FFF', opacity: 0.6, marginTop: 10 }}>Keep zapping germs to win!</p>
+            <div style={{ textAlign: "center", padding: "40px 20px", background: "rgba(255,255,255,0.04)", borderRadius: 24 }}>
+              <div style={{ fontSize: "4rem" }}>{tvToday === "yes" ? "🏆" : "🦠"}</div>
+              <h2 className="title-font">{tvToday === "yes" ? "TV TIME!" : "NO TV YET"}</h2>
+              <p style={{ opacity: 0.6 }}>{tvToday === "yes" ? "The brain shield is strong enough!" : "Keep zapping germs to win screen time."}</p>
             </div>
           )}
 
-          {tab === "parent" && (
-            <div style={{ color: '#FFF' }}>
-              <div style={{ marginBottom: 20 }}>
-                <p>Today's Reward:</p>
-                <button onClick={() => setTvToday(tvToday === "yes" ? "no" : "yes")} style={{ width: '100%', padding: 15, background: tvToday === "yes" ? BP.pink : '#333', color: '#FFF', border: 'none', borderRadius: 12 }}>
-                  Toggle TV Reward: {tvToday.toUpperCase()}
-                </button>
-              </div>
-              <p>Germ Visuals:</p>
-              <div style={{ display: 'flex', gap: 10 }}>
-                {[0,1,2,3].map(l => <button key={l} onClick={() => setGermLevel(l)} style={{ flex: 1, padding: 12, background: germLevel === l ? BP.pink : '#333', color: '#FFF', border: 'none', borderRadius: 10 }}>Level {l}</button>)}
+          {tab === "parent" && admin && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
+              <button onClick={() => setTvToday(tvToday === "yes" ? "no" : "yes")} style={{ padding: 15, borderRadius: 12, border: "none", background: BP.pink, color: "#FFF" }}>Toggle TV: {tvToday.toUpperCase()}</button>
+              <div style={{ display: "flex", gap: 10 }}>
+                {[0,1,2,3].map(l => <button key={l} onClick={() => setGermLevel(l)} style={{ flex: 1, padding: 10, background: germLevel === l ? BP.cyan : "#333", color: "#FFF", borderRadius: 8, border: "none" }}>G{l}</button>)}
               </div>
             </div>
           )}
 
-          <div style={{ position: 'fixed', bottom: 20, left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: 380, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)', display: 'flex', padding: 8, borderRadius: 20, gap: 5 }}>
-            <button onClick={() => setTab("immunity")} style={{ flex: 1, padding: '12px', background: tab === "immunity" ? BP.pink : "none", color: "#FFF", border: "none", borderRadius: 15 }}>🛡️</button>
-            <button onClick={() => setTab("schedule")} style={{ flex: 1, padding: '12px', background: tab === "schedule" ? BP.pink : "none", color: "#FFF", border: "none", borderRadius: 15 }}>📺</button>
-            <button onClick={() => setTab("parent")} style={{ flex: 1, padding: '12px', background: tab === "parent" ? BP.pink : "none", color: "#FFF", border: "none", borderRadius: 15 }}>⚙️</button>
+          <div style={{ position: "fixed", bottom: 20, left: "50%", transform: "translateX(-50%)", width: "90%", maxWidth: 400, background: "rgba(0,0,0,0.3)", backdropFilter: "blur(12px)", borderRadius: 20, display: "flex", padding: 8, gap: 5 }}>
+            <button onClick={() => setTab("immunity")} style={{ flex: 1, padding: 12, background: tab === "immunity" ? "rgba(255,255,255,0.15)" : "none", border: "none", color: "#FFF", borderRadius: 15 }}>🛡️</button>
+            <button onClick={() => setTab("schedule")} style={{ flex: 1, padding: 12, background: tab === "schedule" ? "rgba(255,255,255,0.15)" : "none", border: "none", color: "#FFF", borderRadius: 15 }}>📺</button>
+            <button onClick={() => { if(admin) setTab("parent"); else setAdmin(true); }} style={{ flex: 1, padding: 12, background: tab === "parent" ? "rgba(255,255,255,0.15)" : "none", border: "none", color: admin ? "#FFF" : "rgba(255,255,255,0.1)", borderRadius: 15 }}>⚙️</button>
           </div>
         </div>
       );
     }
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<BrainBank />);
+    root.render(<App />);
   </script>
 </body>
 </html>
