@@ -8,6 +8,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#290b47"> <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-192.png">
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
     /* Clean slate: no scrolling, no bounce, no white flashes */
@@ -36,6 +37,6 @@
 <body>
   <div id="root"></div>
 
-  <script type="module" src="./brain-shield-v24b.jsx"></script>
+  <script type="text/babel" data-type="module" src="./brain-shield-v24b.js"></script>
 </body>
 </html>
