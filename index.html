@@ -467,11 +467,14 @@ function BrainShield({ intensities, immunity, isGlowing, germLevel = 0 }) {
                  100% { transform: translate(${tx * 1.15}px,${ty * 1.15}px); opacity: 0; }
                }
              `}</style>
-             <circle
-                cx={ox}
-                cy={oy}
-                r={spark.size}
-                fill={spark.color}
+             <line
+                x1={ox}
+                y1={oy}
+                x2={x2}
+                y2={y2}
+                stroke={spark.color}
+                strokeWidth={spark.size} // Thickness
+                strokeLinecap="round" // Makes the zap ends look polished
                 style={{
                   animation: `${animName} ${spark.dur}ms ease-out forwards`,
                   transformOrigin: `${ox}px ${oy}px`,
