@@ -199,7 +199,7 @@ function BrainShield({ intensities, immunity, isGlowing, germLevel = 0 }) {
 
 
  // germLevel 0 = none, 1 = normal, 2 = medium, 3 = high
- const germOpacity = [0, 0.18, 0.42, 0.72][germLevel];
+ const germOpacity = [0, 0.28, 0.50, 0.68][germLevel];
  const germCount = [0, 10, 18, 28][germLevel];
  // How dramatically germs bounce outward: px of extra bounce at each level
  const bounceAmp = [0, 8, 22, 48][germLevel];
