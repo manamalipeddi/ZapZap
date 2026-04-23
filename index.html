@@ -758,9 +758,8 @@ function Schedule({ tvToday, tvTomorrow }) {
 
 
  const todayStatusText =
-   tvToday === "yes" ? "TV Time" : "Not TV time, brain is still zapping TV germs";
- const todayStatusColor = tvToday === "yes" ? BP.pink : BP.pink;
- const todayEmoji = tvToday === "yes" ? "🏆" : "⚡";
+   tvToday === "yes" ? "TV Time" : "Not TV Time";
+ const todayEmoji = tvToday === "yes" ? "📺" : "⚡";
 
 
  return (
@@ -794,7 +793,7 @@ function Schedule({ tvToday, tvTomorrow }) {
              style={{
                fontFamily: FONTS.body,
                fontSize: "1rem",
-               color: todayStatusColor,
+               color: BP.pink,
                marginTop: 5,
                fontWeight: 600,
              }}
@@ -813,12 +812,12 @@ function Schedule({ tvToday, tvTomorrow }) {
          alignItems: "center",
          gap: 16,
          padding: "20px 24px 16px",
-         marginTop: 50,
+         marginTop: 40,
          borderRadius: 24,
          background: BP.basecolour,
        }}
      >
-       <div style={{ fontSize: "2.4rem" }}>🔸</div>
+       <div style={{ fontSize: "2.4rem" }}>⚡</div>
        <div style={{ flex: 1 }}>
          <div
            style={{
@@ -833,10 +832,10 @@ function Schedule({ tvToday, tvTomorrow }) {
          <div
            style={{
              fontFamily: FONTS.body,
-             fontSize: "0.78rem",
-             color: BP.textLight,
+             fontSize: "1rem",
+             color: BP.pink,
              marginTop: 5,
-             animation: "softPulse 2.8s ease-in-out infinite",
+             animation: "softPulse 3.8s ease-in-out infinite",
            }}
          >
            Counting germs...
@@ -1308,7 +1307,7 @@ function BrainBank() {
  const tabs = [
    { id: "immunity", label: "Immunity" },
    { id: "parent", label: "Admin", onPress: handleAdminTap, isAdmin: true },
-   { id: "schedule", label: "Schedule" },
+   { id: "schedule", label: "TV Schedule" },
  ];
 
 
