@@ -22,6 +22,7 @@
     #root { height: 100%; width: 100%; }
     @keyframes spinCW { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @keyframes spinCCW { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+    @keyframes slowSpin {from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @keyframes brainFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
     input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 15px 0; }
@@ -360,7 +361,7 @@ function BrainShield({ intensities, immunity, isGlowing, germLevel = 0 }) {
                  userSelect: "none",
                  animation:
                    germLevel > 0
-                     ? `gb${i} ${dur}s ease-in-out infinite`
+                     ? `gb${i} ${dur}s ease-in-out infinite, slowSpin 50s linear infinite`
                      : "none",
                  transformOrigin: `${gx}px ${gy}px`,
                }}
