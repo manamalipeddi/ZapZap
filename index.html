@@ -199,10 +199,10 @@ function BrainShield({ intensities, immunity, isGlowing, germLevel = 0 }) {
 
 
  // germLevel 0 = none, 1 = normal, 2 = medium, 3 = high
- const germOpacity = [0, 0.28, 0.50, 0.68][germLevel];
- const germCount = [0, 10, 18, 28][germLevel];
+ const germOpacity = [0, 0.38, 0.50, 0.68][germLevel];
+ const germCount = [0, 12, 20, 28][germLevel];
  // How dramatically germs bounce outward: px of extra bounce at each level
- const bounceAmp = [0, 8, 22, 48][germLevel];
+ const bounceAmp = [0, 15, 22, 48][germLevel];
  // Bounce speed: lower = slower drift, higher = snappier
  const bounceSpeed = [0, 5, 3.5, 2][germLevel];
 
@@ -283,7 +283,7 @@ function BrainShield({ intensities, immunity, isGlowing, germLevel = 0 }) {
 
  // Band where germs live: from just outside sleep ring to beyond outermost activity ring
  // As activities are added, maxR grows and the OUTER edge of the band expands — germs spread out
- const bandInner = SLEEP_R - germLevel*3;
+ const bandInner = SLEEP_R - germLevel*5;
  const bandOuter = maxR + 44; // always extends well beyond outermost ring
 
 
