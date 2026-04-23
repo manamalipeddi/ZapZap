@@ -283,7 +283,7 @@ function BrainShield({ intensities, immunity, isGlowing, germLevel = 0 }) {
 
  // Band where germs live: from just outside sleep ring to beyond outermost activity ring
  // As activities are added, maxR grows and the OUTER edge of the band expands — germs spread out
- const bandInner = SLEEP_R - germLevel*6;
+ const bandInner = SLEEP_R + rings.length*2 - germLevel*6;
  const bandOuter = maxR + 44; // always extends well beyond outermost ring
 
 
