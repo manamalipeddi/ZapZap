@@ -340,36 +340,41 @@ function BrainShield({ intensities, immunity, isGlowing, germLevel = 0 }) {
 
        {/* Germs — positions computed live from current maxR so they spread as activities are added */}
        {germCount > 0 &&
-         seeds.slice(0, germCount).map((seed, i) => {
-           // radialDist: linearly interpolate between bandInner and bandOuter using bandFrac
-           // As bandOuter grows with maxR, germs with higher bandFrac move further out
-           const radialDist =
-             bandInner + seed.bandFrac * (bandOuter - bandInner);
-           const gx = cx + Math.cos(seed.angle) * radialDist;
-           const gy = cy + Math.sin(seed.angle) * radialDist;
-           const dur = bounceSpeed * seed.speedMult;
-           return (
-             <text
-               key={`germ-${i}`}
-               x={gx}
-               y={gy}
-               fontSize={seed.size}
-               textAnchor="middle"
-               dominantBaseline="middle"
-               opacity={germOpacity}
-               style={{
-                 userSelect: "none",
-                 animation:
-                   germLevel > 0
-                     ? `gb${i} ${dur}s ease-in-out infinite, slowSpin 50s linear infinite`
-                     : "none",
-                 transformOrigin: `${gx}px ${gy}px`,
-               }}
-             >
-               🦠
-             </text>
-           );
-         })}
+  seeds.slice(0, germCount).map((seed, i) => {
+    const radialDist = bandInner + seed.bandFrac * (bandOuter - bandInner);
+    const gx = cx + Math.cos(seed.angle) * radialDist;
+    const gy = cy + Math.sin(seed.angle) * radialDist;
+    const dur = bounceSpeed * seed.speedMult;
+
+    return (
+      /* The Group handles the BOUNCE (Position) */
+      <g
+        key={`germ-wrapper-${i}`}
+        style={{
+          animation: germLevel > 0 ? `gb${i} ${dur}s ease-in-out infinite` : "none",
+          transformOrigin: `${gx}px ${gy}px`,
+        }}
+      >
+        /* The Text handles the SPIN (Rotation) */
+        <text
+          x={gx}
+          y={gy}
+          fontSize={seed.size}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          opacity={germOpacity}
+          style={{
+            userSelect: "none",
+            display: "block",
+            animation: germLevel > 0 ? `slowSpin 60s linear infinite` : "none",
+            transformOrigin: `${gx}px ${gy}px`,
+          }}
+        >
+          🦠
+        </text>
+      </g>
+    );
+  })}
 
 
        {/* Sleep ring — dotted */}
