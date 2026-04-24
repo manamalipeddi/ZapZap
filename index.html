@@ -257,7 +257,7 @@
           <div style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 14px 6px" }}>
             {active && !expanded && <div style={{ width:8, height:8, borderRadius:"50%", background:rc, flexShrink:0, boxShadow:`0 0 4px ${rc}` }}/>}
             <span style={{ fontSize:"1.2rem", minWidth:26 }}>{activity.emoji}</span>
-            <span style={{ fontFamily:FONTS.body, fontWeight:active?600:400, fontSize:"1rem", color:expanded?BP.sliderFg:active?BP.textMed:BP.textLight, flex:1 }}>{activity.label}</span>
+            <span style={{ fontFamily:FONTS.body, fontWeight: 600, fontSize:"1rem", color:expanded?BP.sliderFg:active?BP.textMed:BP.textLight, flex:1 }}>{activity.label}</span>
             {expanded && (
               <button onClick={e=>{e.stopPropagation();onToggle();}}
                 style={{ width:28, height:28, borderRadius:"50%", border:"none", background:BP.roundbuttons, color:BP.white, fontSize:"0.85rem", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>✓</button>
@@ -267,9 +267,9 @@
                 style={{ width:26, height:26, borderRadius:"50%", border:"none", background:BP.pink, color:BP.white, fontSize:"0.95rem", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>+</button>
             )}
           </div>
-          {active && !expanded && (
+          {!expanded && (
             <div style={{ margin:"0 14px 8px", height:3, background:"rgba(0,0,0,0.07)", borderRadius:3, overflow:"hidden" }}>
-              <div style={{ height:"100%", width:`${barPct}%`, background:rc, borderRadius:3, transition:"width .4s ease", boxShadow:`0 0 4px ${rc}66` }}/>
+              <div style={{ height:"100%", width:`${barPct}%`, background: active ? rc : BP.basecolour, borderRadius:3, transition:"width .4s ease", boxShadow:`0 0 4px ${rc}66` }}/>
             </div>
           )}
           {!active && !expanded && <div style={{ height:4 }}/>}
@@ -440,7 +440,7 @@
                 </div>
 
                 {/* Kid selector */}
-                <div style={{ display:"flex", justifyContent:"center", gap:18, marginTop:16, marginBottom:8 }} onClick={e=>e.stopPropagation()}>
+                <div style={{ display:"flex", justifyContent:"center", gap:28, marginTop:16, marginBottom:8 }} onClick={e=>e.stopPropagation()}>
                   {KIDS.map(k => {
                     const isSel = selectedKid === k.id;
                     return (
