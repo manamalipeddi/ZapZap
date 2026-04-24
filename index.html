@@ -107,6 +107,12 @@
       const bounceSpeed  = [0, 5,    3.5,  2   ][germLevel];
       const sparkCountBase = [0, 2, 5, 9][germLevel];
 
+      const rings = ACTIVITIES.map((a, i) => ({
+  idx: intensities[a.id] ?? null,
+  color: RING_COLORS[i % RING_COLORS.length],
+  i, isFirstTime: !!a.isFirstTime,
+})).filter(r => r.idx !== null);
+
       const [sparks, setSparks] = useState([]);
       const sparkId = useRef(0);
       useEffect(() => {
@@ -138,12 +144,6 @@
       ).current;
 
       const ringDurs = useRef(ACTIVITIES.map((_, i) => 8 + i * 0.7 + Math.random() * 2)).current;
-
-      const rings = ACTIVITIES.map((a, i) => ({
-        idx: intensities[a.id] ?? null,
-        color: RING_COLORS[i % RING_COLORS.length],
-        i, isFirstTime: !!a.isFirstTime,
-      })).filter(r => r.idx !== null);
 
       const maxR = rings.length > 0 ? RING_START + (rings.length - 1) * GAP : RING_START;
       const pad = 4, W = (maxR + pad) * 2, H = (maxR + pad) * 2, cx = W / 2, cy = H / 2;
