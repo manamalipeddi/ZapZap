@@ -254,9 +254,9 @@
       const barPct = active ? ((intensityIdx+1)/INTENSITY_STEPS)*100 : 0;
       return (
         <div style={{ borderRadius:14, overflow:"hidden", background:expanded?BP.sliderBg:BP.basecolour, transition:"background .4s ease", cursor:"pointer" }} onClick={onToggle}>
-          <div style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 14px 6px" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 14px 6px", minHeight:46 }}>
             {!expanded && <div style={{ width:8, height:8, borderRadius:"50%", background: active ? rc : `${rc}25`, flexShrink:0, boxShadow: active ? `0 0 4px ${rc}` : "none" }}/>}
-            <span style={{ fontSize:"1.2rem", minWidth:26, lineHeight:1 }}>{activity.emoji}</span>
+            <span style={{ fontSize:"1.2rem", minWidth:26 }}>{activity.emoji}</span>
             <span style={{ fontFamily:FONTS.body, fontWeight: 600, fontSize:"1rem", color:expanded?BP.sliderFg:active?BP.textMed:BP.textLight, flex:1 }}>{activity.label}</span>
             {expanded && (
               <button onClick={e=>{e.stopPropagation();onToggle();}}
