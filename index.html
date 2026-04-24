@@ -126,7 +126,7 @@
           setTimeout(() => setSparks([]), 1100);
         }, 2200);
         return () => clearInterval(iv);
-      }, [germLevel]);
+      }, [germLevel, rings.length]);
 
       const seeds = useRef(
         [...Array(28)].map((_, i) => {
@@ -268,7 +268,7 @@
             )}
           </div>
           {!expanded && (
-            <div style={{ margin:"0 14px 8px", height:3, background:"rgba(0,0,0,0.07)", borderRadius:3, overflow:"hidden" }}>
+            <div style={{ margin:"0 14px 0", height:3, background:"rgba(0,0,0,0.07)", borderRadius:3, overflow:"hidden" }}>
               <div style={{ height:"100%", width:`${barPct}%`, background: active ? rc : `${rc}25`, transition:"width .4s ease", boxShadow:`0 0 4px ${rc}66` }}/>
             </div>
           )}
