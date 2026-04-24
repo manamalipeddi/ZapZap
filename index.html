@@ -490,7 +490,7 @@
             <div onClick={handleTitle} style={{ textAlign:"center", marginBottom:20, cursor:"pointer", userSelect:"none" }}>
               <div className="elsie" style={{ fontSize:"2.4rem", color:BP.text, lineHeight:1, letterSpacing:1 }}>Zap Zap</div>
               {secretMode && (
-                <div style={{ display:"inline-block", marginTop:6, background:BP.pink, borderRadius:20, padding:"3px 14px", fontFamily:FONTS.body, fontWeight:700, fontSize:"0.65rem", color:BP.white }}>
+                <div style={{ display:"inline-block", marginTop:14, background:BP.pink, borderRadius:20, padding:"3px 14px", fontFamily:FONTS.body, fontWeight:700, fontSize:"0.65rem", color:BP.white }}>
                   🔓 admin mode on
                 </div>
               )}
@@ -498,53 +498,59 @@
 
             {/* Immunity tab content */}
             {tab === "immunity" && (
-              <div style={{ animation:"fadeIn .35s ease", display:"flex", flexDirection:"column", gap:4 }}>
+              <div style={{ animation:"fadeIn .35s ease", display:"flex", flexDirection:"column" }}>
 
-                {/* Brain shield */}
-                <div style={{ textAlign:"center", padding:"40px 0 20px", overflow:"visible" }}>
-                  <BrainShield intensities={intensities} immunity={immunity} isGlowing={isGlowing} germLevel={germLevel}/>
-                </div>
+                {/* Static section — brain + kid selector, does not scroll */}
+                <div style={{ position:"sticky", top:0, zIndex:10, background:BP.basecolour, paddingBottom:8 }}>
 
-                {/* Kid selector — below the brain, above activities */}
-                <div style={{ display:"flex", justifyContent:"center", gap:18, marginBottom:12, marginTop:4 }}>
-                  {KIDS.map(k => {
-                    const isSelected = selectedKid === k.id;
-                    return (
-                      <div key={k.id} style={{ textAlign:"center", cursor:"pointer" }}
-                        onClick={e=>{e.stopPropagation();setSelectedKid(k.id);setExpanded(null);}}>
-                        <div style={{
-                          width:52, height:52, borderRadius:"50%", background:k.color,
-                          display:"flex", alignItems:"center", justifyContent:"center",
-                          fontSize:"1.7rem", margin:"0 auto 5px",
-                          boxShadow: isSelected
-                            ? `0 0 0 3px ${BP.white}, 0 0 0 5px ${k.color}, 0 4px 16px ${k.color}88`
-                            : `0 3px 12px ${k.color}44`,
-                          transition:"box-shadow 0.2s ease, opacity 0.2s ease",
-                          opacity: isSelected ? 1 : 0.5,
-                        }}>
-                          {k.emoji}
-                        </div>
-                        <div style={{ fontFamily:FONTS.body, fontWeight:isSelected?700:400, fontSize:"0.65rem", color:isSelected?BP.text:BP.textLight, transition:"all 0.2s" }}>
-                          {k.name}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Activities */}
-                {ACTIVITIES.map((a, i) => (
-                  <div key={a.id} style={{ animation:`fadeIn .3s ease ${i*0.04}s both` }} onClick={e=>e.stopPropagation()}>
-                    <ActivityChip
-                      activity={a} aIdx={i}
-                      intensityIdx={intensities[a.id] ?? null}
-                      onSet={idx=>{setInt(a,idx);setExpanded(a.id);}}
-                      onClear={()=>clearAct(a)}
-                      expanded={expanded===a.id}
-                      onToggle={()=>setExpanded(prev=>prev===a.id?null:a.id)}
-                    />
+                  {/* Brain shield */}
+                  <div style={{ textAlign:"center", padding:"16px 0 28px", overflow:"visible" }}>
+                    <BrainShield intensities={intensities} immunity={immunity} isGlowing={isGlowing} germLevel={germLevel}/>
                   </div>
-                ))}
+
+                  {/* Kid selector */}
+                  <div style={{ display:"flex", justifyContent:"center", gap:18, marginBottom:4 }}>
+                    {KIDS.map(k => {
+                      const isSelected = selectedKid === k.id;
+                      return (
+                        <div key={k.id} style={{ textAlign:"center", cursor:"pointer" }}
+                          onClick={e=>{e.stopPropagation();setSelectedKid(k.id);setExpanded(null);}}>
+                          <div style={{
+                            width:52, height:52, borderRadius:"50%", background:k.color,
+                            display:"flex", alignItems:"center", justifyContent:"center",
+                            fontSize:"1.7rem", margin:"0 auto 5px",
+                            boxShadow: isSelected
+                              ? `0 0 0 2px #00FFC5`
+                              : `0 3px 12px ${k.color}44`,
+                            transition:"box-shadow 0.2s ease, opacity 0.2s ease",
+                            opacity: isSelected ? 1 : 0.5,
+                          }}>
+                            {k.emoji}
+                          </div>
+                          <div style={{ fontFamily:FONTS.body, fontWeight:isSelected?700:400, fontSize:"0.65rem", color:isSelected?BP.text:BP.textLight, transition:"all 0.2s" }}>
+                            {k.name}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Scrollable activities */}
+                <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
+                  {ACTIVITIES.map((a, i) => (
+                    <div key={a.id} style={{ animation:`fadeIn .3s ease ${i*0.04}s both` }} onClick={e=>e.stopPropagation()}>
+                      <ActivityChip
+                        activity={a} aIdx={i}
+                        intensityIdx={intensities[a.id] ?? null}
+                        onSet={idx=>{setInt(a,idx);setExpanded(a.id);}}
+                        onClear={()=>clearAct(a)}
+                        expanded={expanded===a.id}
+                        onToggle={()=>setExpanded(prev=>prev===a.id?null:a.id)}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
